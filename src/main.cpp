@@ -18,7 +18,7 @@ void display(void) {
 	glVertex2f(0.5, 0.5);
 	glVertex2f(0.5, -0.5);
 	glEnd();
-
+	// Bla bla
 	/* flush GL buffers */
 	glFlush();
 }
