@@ -1,0 +1,9 @@
+Reija: collisions and camera
+Alexander: controls health shooting 
+Thijs: background enemy spawning graphics  
+
+boss geometry 
+boss 
+pixel shading 
+
+
