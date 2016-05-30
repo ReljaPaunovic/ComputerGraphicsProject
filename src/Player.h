@@ -11,5 +11,8 @@ public:
 
 	void tick();
 	void render();
+
+private:
+	int x, y;
 };
 

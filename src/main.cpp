@@ -16,10 +16,17 @@ const int HEIGHT = 600;
 std::vector<GameObject*> gameObjects;
 Player* player;
 
+int cameraX = 0, cameraY = 0;
+
 void display() {
 	/* clear window */
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	// Setup projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(cameraX, cameraX + WIDTH, cameraY + HEIGHT, cameraY);
 
 	// TODO: Limit framerate
 	for (GameObject* obj : gameObjects) {
@@ -28,6 +35,8 @@ void display() {
 	}
 
 	glFlush();
+
+	glutPostRedisplay();
 }
 
 //take keyboard input into account
