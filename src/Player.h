@@ -6,5 +6,10 @@ class Player:
 public:
 	Player();
 	~Player();
+
+	void handleKeyboard(unsigned char key);
+
+	void tick();
+	void render();
 };
 

@@ -10,6 +10,25 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Background.cpp" />
+    <ClCompile Include="..\..\src\Boss.cpp" />
+    <ClCompile Include="..\..\src\Enemy.cpp" />
+    <ClCompile Include="..\..\src\Foreground.cpp" />
+    <ClCompile Include="..\..\src\GameObject.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\Player.cpp" />
+    <ClCompile Include="..\..\src\Projectile.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Background.h" />
+    <ClInclude Include="..\..\src\Boss.h" />
+    <ClInclude Include="..\..\src\Enemy.h" />
+    <ClInclude Include="..\..\src\Foreground.h" />
+    <ClInclude Include="..\..\src\GameObject.h" />
+    <ClInclude Include="..\..\src\Player.h" />
+    <ClInclude Include="..\..\src\Projectile.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{12FA565B-5765-4586-B79A-3666B92A5BF7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -84,25 +103,6 @@
       <AdditionalDependencies>freeglut.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="$(ProjectDir)\..\..\src\main.cpp" />
-    <ClCompile Include="Background.cpp" />
-    <ClCompile Include="Boss.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="Foreground.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Projectile.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Background.h" />
-    <ClInclude Include="Boss.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="Foreground.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Projectile.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
