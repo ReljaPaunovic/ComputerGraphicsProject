@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g -std=c+11
+CFLAGS = -g -std=c++11
 LDFLAGS = -lGL -lGLU -lglut
 
 sourcefiles := $(wildcard src/*.cpp)

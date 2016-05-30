@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "Player.h"
 #include "Camera.h"
+#include "Background.h"
 #include <vector>
 
 const int WIDTH = 800;
@@ -17,6 +18,7 @@ const int HEIGHT = 600;
 std::vector<GameObject*> gameObjects;
 Player* player;
 Camera* camera;
+Background* background;
 
 int cameraX = 0, cameraY = 0;
 
@@ -28,13 +30,13 @@ void display() {
 	// Setup projection
 	camera->updatePosition(player);
 	camera->setProjection();
-
+	background->render(cameraX);
 	// TODO: Limit framerate
 	for (GameObject* obj : gameObjects) {
 		obj->tick();
 		obj->render();
 	}
-
+	
 	glFlush();
 
 	glutPostRedisplay();
@@ -64,8 +66,9 @@ int main(int argc, char** argv) {
 	// Initialize game world
 	player = new Player();
 	camera = new Camera(WIDTH, HEIGHT);
+	background = new Background();
 	gameObjects.push_back(player);
-
+	
 	// Start game
 	glutMainLoop();
 }
