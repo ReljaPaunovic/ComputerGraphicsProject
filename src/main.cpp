@@ -23,6 +23,45 @@ void display(void) {
 	glFlush();
 }
 
+/*//take keyboard input into account
+void keyboard(unsigned char key, int x, int y)
+{
+	//printf("key %d pressed at %d,%d\n", key, x, y);
+	//fflush(stdout);
+
+	if ((key >= '1') && (key <= '9'))
+	{
+		//DisplayMode = (DisplayModeType)(key - '0');
+		return;
+	}
+
+	switch (key)
+	{
+	case 27:     // touche ESC
+		exit(0);
+	case 'L':
+		//turn lighting on
+		glEnable(GL_LIGHTING);
+		break;
+	case 'l':
+		//turn lighting off
+		glDisable(GL_LIGHTING);
+		break;
+	case 'w':
+		angle += 1;
+		break;
+	case 's':
+		angle -= 1;
+		break;
+	case 'e':
+		angle1 += 1;
+		break;
+	case 'd':
+		angle1 -= 1;
+		break;
+	}
+}*/
+
 void init() {
 	/* set clear color to blue */
 	glClearColor(0.0, 0.0, 1.0, 0.0);
