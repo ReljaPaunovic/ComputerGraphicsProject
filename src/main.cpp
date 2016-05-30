@@ -8,6 +8,7 @@
 #include <GL/glut.h>
 #include "GameObject.h"
 #include "Player.h"
+#include "Camera.h"
 #include <vector>
 
 const int WIDTH = 800;
@@ -15,6 +16,7 @@ const int HEIGHT = 600;
 
 std::vector<GameObject*> gameObjects;
 Player* player;
+Camera* camera;
 
 int cameraX = 0, cameraY = 0;
 
@@ -24,9 +26,8 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	// Setup projection
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(cameraX, cameraX + WIDTH, cameraY + HEIGHT, cameraY);
+	camera->updatePosition(player);
+	camera->setProjection();
 
 	// TODO: Limit framerate
 	for (GameObject* obj : gameObjects) {
@@ -62,6 +63,7 @@ int main(int argc, char** argv) {
 
 	// Initialize game world
 	player = new Player();
+	camera = new Camera(WIDTH, HEIGHT);
 	gameObjects.push_back(player);
 
 	// Start game

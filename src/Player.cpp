@@ -6,6 +6,7 @@ Player::Player()
 {
 	x = 100;
 	y = 100;
+	//collider = new CircleCollider(5);
 }
 
 
@@ -29,7 +30,13 @@ void Player::tick() {
 	// TODO
 }
 
+void Player::onCollide(GameObject* other) {
+	// TODO
+}
+
 void Player::render() {
+	setupTransformation();
+
 	glBegin(GL_QUADS);
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glVertex2f(x, y);
