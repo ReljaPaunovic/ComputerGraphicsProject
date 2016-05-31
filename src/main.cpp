@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 	glutCreateWindow("Lightbringer");
 	glutDisplayFunc(display);
 	glutKeyboardFunc(keyboard);
-
+	putenv( (char *) "__GL_SYNC_TO_VBLANK=1" );
 	// Initialize game world
 	player = new Player();
 	camera = new Camera(WIDTH, HEIGHT);
