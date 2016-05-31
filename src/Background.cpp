@@ -35,7 +35,7 @@ return lerp1( xf, l0, xs );
 
 
 float mulDelSmoothNoise1D(float x){
-	return (((smoothNoise1D(x)+smoothNoise1D(0.6*(x-2))*0.6+smoothNoise1D(3*x-4)/8+smoothNoise1D(16*x)/8)+smoothNoise1D(x-14.3)+smoothNoise1D(4*x)*0.15+smoothNoise1D(x/16)*3)/7);
+	return (((smoothNoise1D(x)+smoothNoise1D(0.6*(x-2))*0.6+smoothNoise1D(3.1*x-4)/8+smoothNoise1D(16.3*x)/8)+smoothNoise1D(x-14.3)+smoothNoise1D(4*x)*0.15+smoothNoise1D(x/16)*3)/7);
 
 }
 
