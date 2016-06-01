@@ -10,8 +10,8 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Background.h"
+#include "Stopwatch.h"
 #include <vector>
-#include <chrono>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -24,15 +24,14 @@ Player* player;
 Camera* camera;
 Background* background;
 
-std::chrono::steady_clock::time_point lastFrame;
+Stopwatch frameTimer;
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
 
 void display() {
-	auto timeNow = std::chrono::high_resolution_clock::now();
-	float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(timeNow - lastFrame).count() / 1e6f;
-	lastFrame = timeNow;
+	float deltaTime = frameTimer.time();
+	frameTimer.restart();
 
 	// Clear screen
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -54,7 +53,10 @@ void drawGameObjects(float deltaTime) {
 	// Draw background
 	background->render(camera->getX());
 
-	for (GameObject* obj : gameObjects) {
+	// Copy is made such that game objects can remove themselves or spawn new game objects
+	std::vector<GameObject*> gameObjectsCopy = gameObjects;
+
+	for (GameObject* obj : gameObjectsCopy) {
 		obj->tick(deltaTime);
 		obj->render();
 	}
@@ -116,6 +118,7 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(display);
 	glutKeyboardFunc(keyboardDown);
 	glutKeyboardUpFunc(keyboardUp);
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 	putenv( (char *) "__GL_SYNC_TO_VBLANK=1" );
 
 	// Initialize game world
@@ -123,8 +126,6 @@ int main(int argc, char** argv) {
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
 	gameObjects.push_back(player);
-	
-	lastFrame = std::chrono::high_resolution_clock::now();
 
 	// Start game
 	glutMainLoop();

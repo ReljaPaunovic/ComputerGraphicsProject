@@ -1,5 +1,9 @@
 #pragma once
+
 #include "GameObject.h"
+#include "Stopwatch.h"
+#include <GL/GL.h>
+
 class Player:
 	public GameObject
 {
@@ -25,6 +29,11 @@ private:
 	
 	float rotationLeft = 0.0f;
 	float rotationRight = 0.0f;
+
+	bool firing = false;
+	float firingDelay = 1.0f / 10;
+
+	Stopwatch fireTimer;
 
 	GLuint texture;
 };

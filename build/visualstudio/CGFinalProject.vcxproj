@@ -31,6 +31,7 @@
     <ClInclude Include="..\..\src\GameObject.h" />
     <ClInclude Include="..\..\src\Player.h" />
     <ClInclude Include="..\..\src\Projectile.h" />
+    <ClInclude Include="..\..\src\Stopwatch.h" />
     <ClInclude Include="..\..\src\Util.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
