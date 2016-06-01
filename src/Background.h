@@ -6,6 +6,6 @@ public:
 	Background();
 	~Background();
 	void layer1(int ,float ,float ,float ,float, float,float);
-	void render(int);
+	void render(float);
 };
 

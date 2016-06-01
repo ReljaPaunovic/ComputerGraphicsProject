@@ -9,3 +9,11 @@ void Camera::setProjection() {
 void Camera::updatePosition(Player* player) {
 	// TODO
 }
+
+float Camera::getX() const {
+	return x;
+}
+
+float Camera::getY() const {
+	return y;
+}
