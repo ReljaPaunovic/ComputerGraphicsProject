@@ -1,10 +1,12 @@
 #include "Player.h"
 #include "Util.h"
+#include "Projectile.h"
 #include <GL/GL.h>
 #include <cmath>
-
-#define STB_IMAGE_IMPLEMENTATION
+#include <vector>
 #include <stb_image.h>
+
+extern std::vector<GameObject*> gameObjects;
 
 Player::Player()
 {
@@ -51,8 +53,10 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 		accelerationForward = down ? 1.0f : 0.0f;
 	} else if (key == 's') {
 		accelerationBackward = down ? 1.0f : 0.0f;
-	} else if (key == ' ') {
-		velocity = 0.0f;
+	} else if (key == ' ' && down) {
+		float spawnX = x + cos(Util::deg2rad(angle)) * 48;
+		float spawnY = y + sin(Util::deg2rad(angle)) * 48;
+		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
 	}
 }
 
