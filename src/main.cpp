@@ -61,6 +61,21 @@ void checkCollisions() {
 
 }
 
+int minx=0;
+int maxx=0;
+void enemySpawner(){
+
+	int x=camera->getX();
+	if(x>maxx||x<minx){
+
+		enemy = new Enemy();
+		enemy->x=x;
+		std::cout<<x << "=x \n"
+		
+	}
+}
+
+
 void display() {
 
 	// Clear screen
@@ -71,7 +86,9 @@ void display() {
 
 	drawGameObjects(1.0f/60);
 	drawUI(1.0f/60);
-	
+
+	enemySpawner();
+
 	glFlush();
 
 	glutPostRedisplay();
