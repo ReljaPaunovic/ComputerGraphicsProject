@@ -35,6 +35,7 @@ Enemy* enemy;
 Background* background;
 
 Stopwatch frameTimer;
+Stopwatch gameTimer;
 
 // Post-processing related objects
 GLuint framebuffer;
@@ -42,6 +43,7 @@ GLuint texColorBuffer;
 
 GLuint shaderProgram;
 GLint playerPositionUniformLoc;
+GLint timeUniformLoc;
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
@@ -169,6 +171,7 @@ void initDisplay() {
 	std::cerr << buffer << std::endl;
 
 	playerPositionUniformLoc = glGetUniformLocation(shaderProgram, "playerPosition");
+	timeUniformLoc = glGetUniformLocation(shaderProgram, "time");
 }
 
 int minx=0;
@@ -227,6 +230,9 @@ void display() {
 	glUseProgram(shaderProgram);
 	if (playerPositionUniformLoc != -1) {
 		glUniform2f(playerPositionUniformLoc, player->getScreenPos(camera).x, player->getScreenPos(camera).y);
+	}
+	if (timeUniformLoc != -1) {
+		glUniform1f(timeUniformLoc, gameTimer.time());
 	}
 
 	drawPostProcessing(deltaTime);

@@ -1,6 +1,7 @@
 uniform sampler2D tex;
 
 uniform vec2 playerPosition;
+uniform float time;
 
 float viewDistance = 300.0;
 
@@ -15,7 +16,7 @@ void main() {
 
     // Show light around player
     float d = distance(gl_FragCoord.xy, playerPosition);
-    d /= viewDistance;
+    d /= max(1.0, viewDistance - time * 10.0);
     d = 1.0 - d;
 
     vec4 multiplier = vec4(d, d, d, 1.0);
