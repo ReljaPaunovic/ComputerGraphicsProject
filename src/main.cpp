@@ -31,6 +31,38 @@ Stopwatch frameTimer;
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
 
+double distanceCalculate(double x1, double y1, double x2, double y2)
+{
+	double x = x1 - x2;
+	double y = y1 - y2;
+	double dist;
+
+	dist = pow(x, 2) + pow(y, 2);
+	dist = sqrt(dist);
+
+	return dist;
+}
+
+void checkCollision(GameObject* obj1, GameObject* obj2) {
+	if (obj1->collider->type == CIRCLE && obj2->collider->type == CIRCLE) {
+		double dist = distanceCalculate(obj1->x + obj1->cx, obj1->y + obj1->cy, obj2->x + obj2->cx, obj2->y + obj2->cy);
+		if (dist <= (obj1->collider->r + obj2->collider->r)) {
+			obj1->onCollide(obj2);
+			obj2->onCollide(obj1);
+		}
+	}
+}
+
+void checkCollisions() {
+	int size = gameObjects.size();
+	for (int i = 0; i < size; i++) {
+		for (int j = i + 1; j < size; j++) {
+				checkCollision(gameObjects[i], gameObjects[j]);
+		}
+	}
+
+}
+
 void display() {
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
@@ -38,6 +70,8 @@ void display() {
 	// Clear screen
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	checkCollisions();
 
 	drawGameObjects(deltaTime);
 	drawUI(deltaTime);

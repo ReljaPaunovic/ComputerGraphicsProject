@@ -2,6 +2,7 @@
 #include "Util.h"
 #include <stb_image.h>
 #include <cmath>
+#define PI 3.14
 
 Projectile::Projectile(float x, float y, float direction, float velocity)
 {
@@ -9,6 +10,7 @@ Projectile::Projectile(float x, float y, float direction, float velocity)
 	this->y = y;
 	this->angle = direction;
 	this->velocity = velocity;
+	collider = new Collider(5);
 
 	cx = 5;
 	cy = 5;
@@ -70,4 +72,17 @@ void Projectile::render() {
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+
+	glPushMatrix();
+	glTranslatef((float)cx, (float)cy, 0.0f);
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i <= 300; i++) {
+		double angletemp = 2 * PI * i / 300;
+		double xtemp = cos(angletemp);
+		double ytemp = sin(angletemp);
+		glVertex2d(90 * xtemp, 90 * ytemp);
+	}
+	glPopMatrix();
+
+	resetTransformation();
 }

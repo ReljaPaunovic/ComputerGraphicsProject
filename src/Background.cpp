@@ -74,6 +74,7 @@ void Background::render(float viewx){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	 
 	layer1(viewx,0.0084,200,0.15,0.07,0.03,300);
 	layer1(viewx,0.014,300,0.3,0.15,0.07,0.16);
 	layer1(viewx,0.01,200,0.6,0.3,0.15,400);
