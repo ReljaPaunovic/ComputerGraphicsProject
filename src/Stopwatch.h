@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ctime>
+#include <chrono>
 
 class Stopwatch {
 public:
@@ -9,13 +9,14 @@ public:
 	}
 
 	void restart() {
-		startTime = clock();;
+		startTime = std::chrono::high_resolution_clock::now();
 	}
 
 	float time() {
-		return (clock() - startTime) / (float) CLOCKS_PER_SEC;
+		auto timeNow = std::chrono::high_resolution_clock::now();
+		return std::chrono::duration_cast<std::chrono::microseconds>(timeNow - startTime).count() / 1e6f;
 	}
 
 private:
-	clock_t startTime;
+	decltype(std::chrono::high_resolution_clock::now()) startTime;
 };
