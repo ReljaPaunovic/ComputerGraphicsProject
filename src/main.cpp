@@ -4,7 +4,8 @@
 *   This program draws a red rectangle on a blue background.
 *
 */
-
+#define GLEW_STATIC
+#include <GL/glew.h>
 #include <GL/glut.h>
 #include "GameObject.h"
 #include "Player.h"
@@ -14,9 +15,10 @@
 #include <vector>
 #include "Enemy.h"
 #include <random>
-
+#include <cmath>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -87,12 +89,13 @@ void checkCollisions() {
 
 int minx=0;
 int maxx=0;
-const double spawnFactor=1000;
-const double SpawnScaler=2;
-const int spawnRangeMin=-200;
-const int spawnRangeMax=1200;
+const double spawnFactor = 1000;
+const double SpawnScaler = 2;
+const int spawnRangeMin = -400;
+const int spawnRangeMax = 1200;
 std::default_random_engine generator;
 std::exponential_distribution<double> distribution(SpawnScaler);
+
 void enemySpawner(float deltatime){
 
 	int x=camera->getX();
@@ -101,7 +104,7 @@ void enemySpawner(float deltatime){
 			enemy = new Enemy();
 			enemy->y=(rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin;
 			gameObjects.push_back(enemy);
-			if(abs(player->angle-90)%180>90){
+			if( (int)abs(player->angle - 90) % 180 > 90 ){
 				enemy->x=x-10;
 
 			}else{

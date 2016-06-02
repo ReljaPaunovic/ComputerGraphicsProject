@@ -40,7 +40,7 @@ private:
 	float firingDelay = 1.0f / 10.0f;
 	float timeUntilNextFire = 0.0f;
 
-	float upperBoundary = 400;
+	float upperBoundary = 200;
 
 	GLuint texture;
 };

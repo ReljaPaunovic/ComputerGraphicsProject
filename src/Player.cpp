@@ -79,10 +79,10 @@ void Player::tick(float deltaTime) {
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
 	printf("angle = %g\n",angle);
 	if (-y > upperBoundary) {
-		//if(angle >= 270)
+		if (angle <= 270 && angle >= 90)
+			angle += (1 + y / upperBoundary);
+		else
 			angle -= (1 + y / upperBoundary);
-		//else
-			//angle += (1 + y / upperBoundary);
 	}
 	timeUntilNextFire -= deltaTime;
 	if(firing && timeUntilNextFire <= 0.0f){
@@ -150,8 +150,6 @@ void Player::render() {
 		glVertex2d(90 * xtemp, 90 * ytemp);
 	}
 	glEnd();
-
-
 	// ******
 
 	resetTransformation();
