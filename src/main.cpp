@@ -1,4 +1,4 @@
-/*
+﻿/*
 * RedSquare.c
 *
 *   This program draws a red rectangle on a blue background.
@@ -13,10 +13,13 @@
 #include "Background.h"
 #include "Stopwatch.h"
 #include <vector>
+#include <iostream>
 #include "Enemy.h"
+#include "Util.h"
 #include <random>
 #include <cmath>
 #include <algorithm>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include "main.h"
@@ -33,8 +36,15 @@ Background* background;
 
 Stopwatch frameTimer;
 
+// Post-processing related objects
+GLuint framebuffer;
+GLuint texColorBuffer;
+
+GLuint shaderProgram;
+
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
+void drawPostProcessing(float deltaTime);
 
 double distanceCalculate(double x1, double y1, double x2, double y2)
 {
@@ -90,6 +100,74 @@ void checkCollisions() {
 
 }
 
+/*void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userData) {
+	std::cerr << "OpenGL: " << message << std::endl;
+}*/
+
+void initDisplay() {
+//	glEnable(GL_DEBUG_OUTPUT);
+//	glDebugMessageCallback(debugCallback, nullptr);
+	
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+	// Create texture to hold color buffer
+	glGenTextures(1, &texColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	// Create renderbuffer for depth buffer
+	GLuint rboDepthStencil;
+	glGenRenderbuffers(1, &rboDepthStencil);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepthStencil);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rboDepthStencil);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Set up clear values
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Create shader program
+	std::string vertexShaderSrc = Util::readFile("shaders/postprocessing.vert");
+	std::string fragShaderSrc = Util::readFile("shaders/postprocessing.frag");
+	const char* vertexShaderSrcPtr = vertexShaderSrc.c_str();
+	const char* fragShaderSrcPtr = fragShaderSrc.c_str();
+
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSrcPtr, nullptr);
+	glCompileShader(vertexShader);
+
+	char buffer[512];
+	glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
+
+	std::cerr << "vertex shader:" << std::endl;
+	std::cerr << buffer << std::endl;
+
+	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragShader, 1, &fragShaderSrcPtr, nullptr);
+	glCompileShader(fragShader);
+
+	glGetShaderInfoLog(fragShader, 512, NULL, buffer);
+
+	std::cerr << "fragment shader:" << std::endl;
+	std::cerr << buffer << std::endl;
+
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, fragShader);
+	glAttachShader(shaderProgram, vertexShader);
+	glLinkProgram(shaderProgram);
+
+	glGetProgramInfoLog(shaderProgram, 512, nullptr, buffer);
+
+	std::cerr << "link log:" << std::endl;
+	std::cerr << buffer << std::endl;
+}
+
 int minx=0;
 int maxx=0;
 const double spawnFactor = 1000;
@@ -107,7 +185,8 @@ void enemySpawner(float deltatime){
 			enemy = new Enemy();
 			enemy->y=(rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin;
 			gameObjects.push_back(enemy);
-			if( (int)abs(player->angle - 90) % 180 > 90 ){
+			//if( (int)abs(player->angle - 90) % 180 > 90 ){
+			if(abs((int) (player->angle-90))%180>90){
 				enemy->x=x-10;
 
 			}else{
@@ -123,13 +202,14 @@ void enemySpawner(float deltatime){
 		minx=x;
 }
 
-
 void display() {
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
-
-	// Clear screen
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	// Render graphics to post-processing buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glUseProgram(0);
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
@@ -137,10 +217,46 @@ void display() {
 
 	drawGameObjects(deltaTime);
 	drawUI(deltaTime);
-	
-	glFlush();
+
+	// Render scene with post-processing shader
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(shaderProgram);
+
+	drawPostProcessing(deltaTime);
+
+	glutSwapBuffers();
 
 	glutPostRedisplay();
+}
+
+void drawPostProcessing(float deltaTime) {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+
+	// Reset projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+	glBegin(GL_QUADS);
+		glColor3f(1, 1, 1);
+
+		glTexCoord2f(0, 1);
+		glVertex2f(-1, 1);
+
+		glTexCoord2f(1, 1);
+		glVertex2f(1, 1);
+		
+		glTexCoord2f(1, 0);
+		glVertex2f(1, -1);
+
+		glTexCoord2f(0, 0);
+		glVertex2f(-1, -1);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }
 
 void drawGameObjects(float deltaTime) {
@@ -217,7 +333,6 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(keyboardDown);
 	glutKeyboardUpFunc(keyboardUp);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-	putenv( (char *) "__GL_SYNC_TO_VBLANK=1" );
 
 	// Initialize game world
 	player = new Player();
@@ -226,8 +341,11 @@ int main(int argc, char** argv) {
 	enemy = new Enemy();
 	
 	gameObjects.push_back(player);
+
+	// Set up rendering
+	glewInit();
+	initDisplay();
 	gameObjects.push_back(enemy);
-	
 
 	// Start game
 	glutMainLoop();
