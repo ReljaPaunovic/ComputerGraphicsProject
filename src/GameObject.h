@@ -2,6 +2,7 @@
 
 #include <GL/freeglut.h>
 #include "Collider.h"
+#include <stb_image.h>
 
 class GameObject
 {

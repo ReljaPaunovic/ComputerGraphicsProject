@@ -4,7 +4,7 @@
 #include <GL/freeglut.h>
 #include <cmath>
 #include <vector>
-#include <stb_image.h>
+
 
 
 extern std::vector<GameObject*> gameObjects;
