@@ -14,6 +14,8 @@ public:
 
 	Collider(int width, int height) {
 		type = RECTANGLE;
+		this->width = width;
+		this->height = height;
 	}
 
 	double r = 0;

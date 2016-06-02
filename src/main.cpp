@@ -17,6 +17,8 @@
 #include <vector>
 #include <iostream>
 #include "Enemy.h"
+#include <random>
+#include <cmath>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -59,11 +61,26 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 			obj1->onCollide(obj2);
 			obj2->onCollide(obj1);
 		}
-	}
-	else if ((obj1->collider->type == CIRCLE && obj2->collider->type == RECTANGLE) || (obj1->collider->type == RECTANGLE && obj2->collider->type == CIRCLE)) {
+	} // Colission with not rotated rectangle
+	else {
+		if ((obj1->collider->type == CIRCLE && obj2->collider->type == RECTANGLE) || (obj1->collider->type == RECTANGLE && obj2->collider->type == CIRCLE)) {
+			if (obj2->collider->type == CIRCLE) {
+				GameObject * temp = obj1;
+				obj1 = obj2;
+				obj2 = temp;
+			}
+			float x = abs((obj1->x) - (obj2->x));
+			float y = abs((obj1->y) - (obj2->y));
 
+			if (x > (obj2->collider->width / 2 + obj1->collider->r) || y > (obj2->collider->height / 2 + obj1->collider->r)) {
+				return;
+			}
+			if (x <= (obj2->collider->width / 2) || y <= (obj2->collider->height / 2)) {
+				obj1->onCollide(obj2);
+				obj2->onCollide(obj1);
 
-
+			}
+		}
 	}
 }
 
@@ -111,6 +128,38 @@ void initDisplay() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+int minx=0;
+int maxx=0;
+const double spawnFactor=1000;
+const double SpawnScaler=2;
+const int spawnRangeMin=-200;
+const int spawnRangeMax=1200;
+std::default_random_engine generator;
+std::exponential_distribution<double> distribution(SpawnScaler);
+void enemySpawner(float deltatime){
+
+	int x=camera->getX();
+	if(x>maxx||x<minx){
+		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
+			enemy = new Enemy();
+			enemy->y=(rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin;
+			gameObjects.push_back(enemy);
+			if(abs((int) (player->angle-90))%180>90){
+				enemy->x=x-10;
+
+			}else{
+				enemy->x=x+WIDTH+10;
+			}
+			
+		}
+	}
+
+	if(maxx<x)
+		maxx=x;
+	if(minx>x)
+		minx=x;
+}
+
 void display() {
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
@@ -121,7 +170,9 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-	
+
+	enemySpawner(deltaTime);
+
 	drawGameObjects(deltaTime);
 	drawUI(deltaTime);
 
@@ -245,12 +296,13 @@ int main(int argc, char** argv) {
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
 	enemy = new Enemy();
-	gameObjects.push_back(enemy);
+	
 	gameObjects.push_back(player);
 
 	// Set up rendering
 	glewInit();
 	initDisplay();
+	gameObjects.push_back(enemy);
 
 	// Start game
 	glutMainLoop();

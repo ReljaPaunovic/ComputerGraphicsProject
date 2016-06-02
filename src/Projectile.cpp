@@ -57,17 +57,17 @@ void Projectile::render() {
 
 	glBegin(GL_QUADS);
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex2f(0, 0);
 	glTexCoord2f(0, 0);
+	glVertex2f(0, 0);
 
-	glVertex2f(10, 0);
 	glTexCoord2f(1, 0);
+	glVertex2f(10, 0);
 
-	glVertex2f(10, 10);
 	glTexCoord2f(1, 1);
+	glVertex2f(10, 10);
 
-	glVertex2f(0, 10);
 	glTexCoord2f(0, 1);
+	glVertex2f(0, 10);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
