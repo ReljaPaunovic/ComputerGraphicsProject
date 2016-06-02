@@ -50,7 +50,7 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 			obj1->onCollide(obj2);
 			obj2->onCollide(obj1);
 		}
-	}
+	} // Colission with not rotated rectangle
 	else {
 		if ((obj1->collider->type == CIRCLE && obj2->collider->type == RECTANGLE) || (obj1->collider->type == RECTANGLE && obj2->collider->type == CIRCLE)) {
 			if (obj2->collider->type == CIRCLE) {
@@ -58,16 +58,12 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 				obj1 = obj2;
 				obj2 = temp;
 			}
-			float x = abs((obj1->x + obj1->cx) - (obj2->x + obj2->cx));
-			float y = abs((obj1->y + obj1->cy) - (obj2->y + obj2->cy));
+			float x = abs((obj1->x) - (obj2->x));
+			float y = abs((obj1->y) - (obj2->y));
 
-			if (x > (obj2->collider->width / 2 + obj1->collider->r)) {
+			if (x > (obj2->collider->width / 2 + obj1->collider->r) || y > (obj2->collider->height / 2 + obj1->collider->r)) {
 				return;
 			}
-			if (y > (obj2->collider->height / 2 + obj1->collider->r)) {
-				return;
-			}
-
 			if (x <= (obj2->collider->width / 2) || y <= (obj2->collider->height / 2)) {
 				obj1->onCollide(obj2);
 				obj2->onCollide(obj1);
@@ -187,9 +183,9 @@ int main(int argc, char** argv) {
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
 	enemy = new Enemy();
-	gameObjects.push_back(enemy);
+	
 	gameObjects.push_back(player);
-
+	gameObjects.push_back(enemy);
 	
 
 	// Start game

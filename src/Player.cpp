@@ -5,6 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <stb_image.h>
+#define PI 3.14
 
 
 extern std::vector<GameObject*> gameObjects;
@@ -15,7 +16,7 @@ Player::Player()
 	y = 300;
 	cx = 48;
 	cy = 48;
-	collider = new Collider(100, 100);
+	collider = new Collider(90,90);
 
 	// Load and create texture
 	int textureWidth, textureHeight;
@@ -75,7 +76,13 @@ void Player::tick(float deltaTime) {
 
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
-
+	printf("angle = %g\n",angle);
+	if (-y > upperBoundary) {
+		//if(angle >= 270)
+			angle -= (1 + y / upperBoundary);
+		//else
+			//angle += (1 + y / upperBoundary);
+	}
 	timeUntilNextFire -= deltaTime;
 	if(firing && timeUntilNextFire <= 0.0f){
 		timeUntilNextFire = firingDelay;
@@ -91,8 +98,8 @@ void Player::onCollide(GameObject* other) {
 
 	//if (other->)
 		printf("Player -------> Enemy\n");
-		x -= cos(Util::deg2rad(angle));
-		y -= sin(Util::deg2rad(angle));
+		//x -= cos(Util::deg2rad(angle));
+		//y -= sin(Util::deg2rad(angle));
 		velocity = 0;
 }
 
@@ -124,6 +131,16 @@ void Player::render() {
 	// For testing purposes, collision circles
 	/*glPushMatrix();
 	glTranslatef((float)cx, (float)cy, 0.0f);
+	glBegin(GL_QUADS);
+		glVertex2f(-collider->width / 2, -collider->height / 2);
+		glVertex2f(collider->width / 2, -collider->height / 2);
+		glVertex2f(collider->width / 2, collider->height / 2);
+		glVertex2f(-collider->width / 2, collider->height / 2);
+	glEnd();
+	glPopMatrix();*/
+
+	// For testing purposes, collision circles
+	glTranslatef((float)cx, (float)cy, 0.0f);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i <= 300; i++) {
 		double angletemp = 2 * PI * i / 300;
@@ -131,8 +148,10 @@ void Player::render() {
 		double ytemp = sin(angletemp);
 		glVertex2d(90 * xtemp, 90 * ytemp);
 	}
-	glPopMatrix();*/
-	// *****
+	glEnd();
+
+
+	// ******
 
 	resetTransformation();
 }

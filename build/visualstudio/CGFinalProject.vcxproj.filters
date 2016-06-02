@@ -37,6 +37,7 @@
     <ClCompile Include="..\..\src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BossSegment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Player.h">
@@ -70,6 +71,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Stopwatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BossSegment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
