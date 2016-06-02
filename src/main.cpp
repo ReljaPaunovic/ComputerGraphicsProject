@@ -209,7 +209,7 @@ void display() {
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
 	
-	// Render graphics to post-processing buffer
+	// Draw game world to post-processing buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glUseProgram(0);
 	
@@ -219,7 +219,6 @@ void display() {
 	enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime);
-	drawUI(deltaTime);
 
 	// Render scene with post-processing shader
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -231,6 +230,10 @@ void display() {
 	}
 
 	drawPostProcessing(deltaTime);
+
+	// Draw UI
+	glUseProgram(0);
+	drawUI(deltaTime);
 
 	glutSwapBuffers();
 
