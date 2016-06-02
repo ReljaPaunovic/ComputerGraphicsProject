@@ -78,11 +78,15 @@ void Enemy::tick(float deltaTime) {
 
 }
 
+
 void Enemy::onCollide(GameObject* other) {
 	//printf("Enemy ---> Player\n");
 	//Check if it is a PLAYER
 	if (dynamic_cast<Player*>(other) != NULL) {
 		((Player*)other)->setHealth(((Player*)other)->getHealth() - this->getHealth());
+		//this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
+	else
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 }

@@ -17,6 +17,7 @@ public:
 	float getHealth() {
 		return health;
 	}
+	//void animateDeath();
 
 private:
 	float health = 10;
