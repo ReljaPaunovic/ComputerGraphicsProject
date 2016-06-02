@@ -75,9 +75,10 @@ void Player::tick(float deltaTime) {
 
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
-	lastshot++;
-	if(firing&&lastshot>firingDelay){	
-		lastshot=0;	
+
+	timeUntilNextFire -= deltaTime;
+	if(firing && timeUntilNextFire <= 0.0f){
+		timeUntilNextFire = firingDelay;
 		float spawnX = x + cos(Util::deg2rad(angle)) * 48;
 		float spawnY = y + sin(Util::deg2rad(angle)) * 48;
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
