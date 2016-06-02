@@ -18,7 +18,7 @@ Projectile::Projectile(float x, float y, float direction, float velocity)
 	// Load and create texture
 	int textureWidth, textureHeight;
 	int textureComponents;
-	stbi_uc* pixels = stbi_load("../../out/textures/bullet.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load("textures/bullet.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -50,7 +50,6 @@ void Projectile::onCollide(GameObject* other) {
 
 void Projectile::render() {
 	setupTransformation();
-
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -72,7 +71,7 @@ void Projectile::render() {
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-
+	/*
 	glPushMatrix();
 	glTranslatef((float)cx, (float)cy, 0.0f);
 	glBegin(GL_LINE_LOOP);
@@ -83,6 +82,6 @@ void Projectile::render() {
 		glVertex2d(90 * xtemp, 90 * ytemp);
 	}
 	glPopMatrix();
-
+	*/
 	resetTransformation();
 }

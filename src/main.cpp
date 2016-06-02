@@ -51,13 +51,19 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 			obj2->onCollide(obj1);
 		}
 	}
+	else if ((obj1->collider->type == CIRCLE && obj2->collider->type == RECTANGLE) || (obj1->collider->type == RECTANGLE && obj2->collider->type == CIRCLE)) {
+
+
+
+	}
 }
 
 void checkCollisions() {
 	int size = gameObjects.size();
+	// If needed, implement better
 	for (int i = 0; i < size; i++) {
-		for (int j = i + 1; j < size; j++) {
-				checkCollision(gameObjects[i], gameObjects[j]);
+		for (int j = i + 1; j < size; j++) {	
+			checkCollision(gameObjects[i], gameObjects[j]);
 		}
 	}
 
