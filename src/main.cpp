@@ -41,6 +41,7 @@ GLuint framebuffer;
 GLuint texColorBuffer;
 
 GLuint shaderProgram;
+GLint playerPositionUniformLoc;
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
@@ -166,6 +167,8 @@ void initDisplay() {
 
 	std::cerr << "link log:" << std::endl;
 	std::cerr << buffer << std::endl;
+
+	playerPositionUniformLoc = glGetUniformLocation(shaderProgram, "playerPosition");
 }
 
 int minx=0;
@@ -179,18 +182,18 @@ std::exponential_distribution<double> distribution(SpawnScaler);
 
 void enemySpawner(float deltatime){
 
-	int x=camera->getX();
+	int x=(int) camera->getX();
 	if(x>maxx||x<minx){
 		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
 			enemy = new Enemy();
-			enemy->y=(rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin;
+			enemy->y=(float) ((rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin);
 			gameObjects.push_back(enemy);
 			//if( (int)abs(player->angle - 90) % 180 > 90 ){
 			if(abs((int) (player->angle-90))%180>90){
-				enemy->x=x-10;
+				enemy->x=x-10.0f;
 
 			}else{
-				enemy->x=x+WIDTH+10;
+				enemy->x=x+WIDTH+10.0f;
 			}
 			
 		}
@@ -220,7 +223,12 @@ void display() {
 
 	// Render scene with post-processing shader
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Set up shader
 	glUseProgram(shaderProgram);
+	if (playerPositionUniformLoc != -1) {
+		glUniform2f(playerPositionUniformLoc, player->getScreenPos(camera).x, player->getScreenPos(camera).y);
+	}
 
 	drawPostProcessing(deltaTime);
 
