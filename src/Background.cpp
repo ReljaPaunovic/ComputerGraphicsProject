@@ -64,7 +64,7 @@ void Background::layer1(int viewx,float freq1,float maxL1Height,float red,float 
 			glVertex2f(viewx+x-1, h1);
 		glEnd();
 		h1=h2;
-		resetTransformation();
+
 	}
 
 

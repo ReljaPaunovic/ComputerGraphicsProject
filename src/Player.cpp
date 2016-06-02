@@ -1,11 +1,11 @@
 #include "Player.h"
 #include "Util.h"
 #include "Projectile.h"
-#include <GL/GL.h>
+#include <GL/freeglut.h>
 #include <cmath>
 #include <vector>
 #include <stb_image.h>
-#define PI 3.14
+
 
 extern std::vector<GameObject*> gameObjects;
 
@@ -15,7 +15,7 @@ Player::Player()
 	y = 300;
 	cx = 48;
 	cy = 48;
-	collider = new Collider(90);
+	collider = new Collider(5);
 
 	// Load and create texture
 	int textureWidth, textureHeight;
@@ -56,9 +56,10 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 		accelerationBackward = down ? 1.0f : 0.0f;
 	} else if (key == ' ') {
 		firing = down;
-		fireTimer.restart();
 	}
 }
+
+int lastshot=999999;
 
 void Player::tick(float deltaTime) {
 	angle -= 180.0f * rotationLeft * deltaTime;
@@ -74,21 +75,18 @@ void Player::tick(float deltaTime) {
 
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
-
-	if (firing && fireTimer.time() > firingDelay) {
+	lastshot++;
+	if(firing&&lastshot>firingDelay){	
+		lastshot=0;	
 		float spawnX = x + cos(Util::deg2rad(angle)) * 48;
 		float spawnY = y + sin(Util::deg2rad(angle)) * 48;
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
-		fireTimer.restart();
 	}
+
 }
 
 void Player::onCollide(GameObject* other) {
 	// TODO
-	printf("Player -------> Enemy\n");
-    x -= cos(Util::deg2rad(angle));
-	y -= sin(Util::deg2rad(angle));
-	velocity = 0;
 }
 
 void Player::render() {
@@ -115,17 +113,5 @@ void Player::render() {
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-	// For testing purposes, collision circles
-	glPushMatrix();
-	glTranslatef((float)cx, (float)cy, 0.0f);
-	glBegin(GL_LINE_LOOP);
-	for (int i = 0; i <= 300; i++) {
-		double angletemp = 2 * PI * i / 300;
-		double xtemp = cos(angletemp);
-		double ytemp = sin(angletemp);
-		glVertex2d(90 * xtemp, 90 * ytemp);
-	}
-	glPopMatrix();
-	// *****
 	resetTransformation();
 }
