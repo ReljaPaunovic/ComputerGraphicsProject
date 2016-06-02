@@ -1,5 +1,5 @@
 Reija: collisions and camera
-Alexander: controls health shooting 
+Alexander: explosions & smoke
 Thijs: background enemy spawning graphics  
 
 boss geometry 
