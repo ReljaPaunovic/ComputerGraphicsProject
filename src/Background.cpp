@@ -58,12 +58,13 @@ void Background::layer1(int viewx,float freq1,float maxL1Height,float red,float 
 		glBegin(GL_QUADS);
 
 			glColor3f(red, green, blue);
-			glVertex2f(x, h2);
-			glVertex2f(x, screenheight);
-			glVertex2f(x-1, screenheight);
-			glVertex2f(x-1, h1);
+			glVertex2f(viewx+x, h2);
+			glVertex2f(viewx+x, screenheight);
+			glVertex2f(viewx+x-1, screenheight);
+			glVertex2f(viewx+x-1, h1);
 		glEnd();
 		h1=h2;
+		resetTransformation();
 	}
 
 
