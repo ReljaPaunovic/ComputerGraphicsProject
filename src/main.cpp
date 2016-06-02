@@ -98,13 +98,13 @@ void checkCollisions() {
 
 }
 
-void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userData) {
+/*void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userData) {
 	std::cerr << "OpenGL: " << message << std::endl;
-}
+}*/
 
 void initDisplay() {
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(debugCallback, nullptr);
+//	glEnable(GL_DEBUG_OUTPUT);
+//	glDebugMessageCallback(debugCallback, nullptr);
 	
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
