@@ -7,11 +7,10 @@
 #include <stb_image.h>
 #include "main.h"
 #include <algorithm>
+#include "main.h"
 #define PI 3.14
 
 
-
-extern std::vector<GameObject*> gameObjects;
 
 Player::Player()
 {
@@ -62,8 +61,6 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 		firing = down;
 	}
 }
-
-int lastshot=999999;
 
 void Player::tick(float deltaTime) {
 	if (health <= 0)
