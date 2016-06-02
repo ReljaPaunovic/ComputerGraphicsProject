@@ -1,6 +1,6 @@
 #include "Enemy.h"
 #include <stdio.h>
-#include <GL/GL.h>
+#include <GL/freeglut.h>
 #define PI 3.14
 #include <cmath>
 

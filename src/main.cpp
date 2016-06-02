@@ -10,7 +10,6 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Background.h"
-#include "Stopwatch.h"
 #include <vector>
 #include "Enemy.h"
 
@@ -26,7 +25,6 @@ Camera* camera;
 Enemy* enemy;
 Background* background;
 
-Stopwatch frameTimer;
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
@@ -70,8 +68,6 @@ void checkCollisions() {
 }
 
 void display() {
-	float deltaTime = frameTimer.time();
-	frameTimer.restart();
 
 	// Clear screen
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -79,8 +75,8 @@ void display() {
 
 	checkCollisions();
 
-	drawGameObjects(deltaTime);
-	drawUI(deltaTime);
+	drawGameObjects(1.0f/60);
+	drawUI(1.0f/60);
 	
 	glFlush();
 
