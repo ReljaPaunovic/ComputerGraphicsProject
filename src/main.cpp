@@ -10,8 +10,10 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Background.h"
+#include "Stopwatch.h"
 #include <vector>
 #include "Enemy.h"
+#include <random>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -25,6 +27,7 @@ Camera* camera;
 Enemy* enemy;
 Background* background;
 
+Stopwatch frameTimer;
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
@@ -49,13 +52,19 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 			obj2->onCollide(obj1);
 		}
 	}
+	else if ((obj1->collider->type == CIRCLE && obj2->collider->type == RECTANGLE) || (obj1->collider->type == RECTANGLE && obj2->collider->type == CIRCLE)) {
+
+
+
+	}
 }
 
 void checkCollisions() {
 	int size = gameObjects.size();
+	// If needed, implement better
 	for (int i = 0; i < size; i++) {
-		for (int j = i + 1; j < size; j++) {
-				checkCollision(gameObjects[i], gameObjects[j]);
+		for (int j = i + 1; j < size; j++) {	
+			checkCollision(gameObjects[i], gameObjects[j]);
 		}
 	}
 
@@ -63,20 +72,40 @@ void checkCollisions() {
 
 int minx=0;
 int maxx=0;
-void enemySpawner(){
+const double spawnFactor=1000;
+const double SpawnScaler=2;
+const int spawnRangeMin=-200;
+const int spawnRangeMax=1200;
+std::default_random_engine generator;
+std::exponential_distribution<double> distribution(SpawnScaler);
+void enemySpawner(float deltatime){
 
 	int x=camera->getX();
 	if(x>maxx||x<minx){
+		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
+			enemy = new Enemy();
+			enemy->y=(rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin;
+			gameObjects.push_back(enemy);
+			if(abs(player->angle-90)%180>90){
+				enemy->x=x-10;
 
-		enemy = new Enemy();
-		enemy->x=x;
-		std::cout<<x << "=x \n"
-		
+			}else{
+				enemy->x=x+WIDTH+10;
+			}
+			
+		}
 	}
+
+	if(maxx<x)
+		maxx=x;
+	if(minx>x)
+		minx=x;
 }
 
 
 void display() {
+	float deltaTime = frameTimer.time();
+	frameTimer.restart();
 
 	// Clear screen
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -84,11 +113,13 @@ void display() {
 
 	checkCollisions();
 
-	drawGameObjects(1.0f/60);
-	drawUI(1.0f/60);
 
-	enemySpawner();
 
+	enemySpawner(deltaTime);
+
+	drawGameObjects(deltaTime);
+	drawUI(deltaTime);
+	
 	glFlush();
 
 	glutPostRedisplay();

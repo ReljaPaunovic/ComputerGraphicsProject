@@ -37,8 +37,8 @@ private:
 	float rotationRight = 0.0f;
 
 	bool firing = false;
-	float firingDelay = 60;
-
+	float firingDelay = 1.0f / 10.0f;
+	float timeUntilNextFire = 0.0f;
 
 	GLuint texture;
 };

@@ -20,7 +20,7 @@ Player::Player()
 	// Load and create texture
 	int textureWidth, textureHeight;
 	int textureComponents;
-	stbi_uc* pixels = stbi_load("../../out/textures/spaceship.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load("textures/spaceship.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -75,9 +75,10 @@ void Player::tick(float deltaTime) {
 
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
-	lastshot++;
-	if(firing&&lastshot>firingDelay){	
-		lastshot=0;	
+
+	timeUntilNextFire -= deltaTime;
+	if(firing && timeUntilNextFire <= 0.0f){
+		timeUntilNextFire = firingDelay;
 		float spawnX = x + cos(Util::deg2rad(angle)) * 48;
 		float spawnY = y + sin(Util::deg2rad(angle)) * 48;
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
@@ -87,6 +88,12 @@ void Player::tick(float deltaTime) {
 
 void Player::onCollide(GameObject* other) {
 	// TODO
+
+	//if (other->)
+		printf("Player -------> Enemy\n");
+		x -= cos(Util::deg2rad(angle));
+		y -= sin(Util::deg2rad(angle));
+		velocity = 0;
 }
 
 void Player::render() {
@@ -113,5 +120,19 @@ void Player::render() {
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+
+	// For testing purposes, collision circles
+	/*glPushMatrix();
+	glTranslatef((float)cx, (float)cy, 0.0f);
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i <= 300; i++) {
+		double angletemp = 2 * PI * i / 300;
+		double xtemp = cos(angletemp);
+		double ytemp = sin(angletemp);
+		glVertex2d(90 * xtemp, 90 * ytemp);
+	}
+	glPopMatrix();*/
+	// *****
+
 	resetTransformation();
 }
