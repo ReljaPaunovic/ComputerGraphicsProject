@@ -15,7 +15,7 @@ return a + x*( b - a );
 float simpleNoise1D( int x )
 {
 x = (x<<13) ^ x;
-return ( 1.0 - ( (x * (x * x * 11432 + 582251) + 1126513539) &0x8fffffff) /1073741824.0);
+return ( 1.0f - ( (x * (x * x * 11432 + 582251) + 1126513539) &0x8fffffff) /1073741824.0f);
 }
 
 float smoothNoise1D( float x )
@@ -35,7 +35,7 @@ return lerp1( xf, l0, xs );
 
 
 float mulDelSmoothNoise1D(float x){
-	return (((smoothNoise1D(x)+smoothNoise1D(0.6*(x-2))*0.6+smoothNoise1D(3.1*x-4)/8+smoothNoise1D(16.3*x)/8)+smoothNoise1D(x-14.3)+smoothNoise1D(4*x)*0.15+smoothNoise1D(x/16)*3)/7);
+	return (((smoothNoise1D(x)+smoothNoise1D(0.6f*(x-2))*0.6f+smoothNoise1D(3.1f*x-4)/8+smoothNoise1D(16.3f*x)/8)+smoothNoise1D(x-14.3f)+smoothNoise1D(4*x)*0.15f+smoothNoise1D(x/16)*3)/7);
 
 }
 
@@ -46,22 +46,22 @@ const int screenWidth=800;
 const int screenheight=800;
 void Background::layer1(int viewx,float freq1,float maxL1Height,float red,float green, float blue ,float xoff){
 
-	double h1=mulDelSmoothNoise1D(((float)(-1+viewx+xoff)*freq1));	
+	float h1=mulDelSmoothNoise1D(((float)(-1+viewx+xoff)*freq1));	
 	h1=(h1*h1)/h1;
 	h1=h1*maxL1Height;
 	h1=screenheight-h1-(screenWidth-maxL1Height);
 	for(int x=0;x<screenWidth-1;x++){
-		double h2=mulDelSmoothNoise1D((((float)(viewx+x+xoff))*freq1));	
+		float h2=mulDelSmoothNoise1D((((float)(viewx+x+xoff))*freq1));	
 		h2=(h2*h2)/h2;
 		h2=h2*maxL1Height;
 		h2=screenheight-h2-(screenWidth-maxL1Height);
 		glBegin(GL_QUADS);
 
 			glColor3f(red, green, blue);
-			glVertex2f(viewx+x, h2);
-			glVertex2f(viewx+x, screenheight);
-			glVertex2f(viewx+x-1, screenheight);
-			glVertex2f(viewx+x-1, h1);
+			glVertex2i(viewx+x, (int) h2);
+			glVertex2i(viewx+x, screenheight);
+			glVertex2i(viewx+x-1, screenheight);
+			glVertex2i(viewx+x-1, (int) h1);
 		glEnd();
 		h1=h2;
 
@@ -75,9 +75,9 @@ void Background::render(float viewx){
 	glLoadIdentity();
 
 	 
-	layer1(viewx,0.0084,200,0.15,0.07,0.03,300);
-	layer1(viewx,0.014,300,0.3,0.15,0.07,0.16);
-	layer1(viewx,0.01,200,0.6,0.3,0.15,400);
+	layer1((int) viewx,0.0084f,200,0.15f,0.07f,0.03f,300);
+	layer1((int) viewx,0.014f,300,0.3f,0.15f,0.07f,0.16f);
+	layer1((int) viewx,0.01f,200,0.6f,0.3f,0.15f,400);
 
 
 }

@@ -13,6 +13,7 @@
 #include "Stopwatch.h"
 #include <vector>
 #include "Enemy.h"
+#include <random>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -84,6 +85,39 @@ void checkCollisions() {
 
 }
 
+int minx=0;
+int maxx=0;
+const double spawnFactor=1000;
+const double SpawnScaler=2;
+const int spawnRangeMin=-200;
+const int spawnRangeMax=1200;
+std::default_random_engine generator;
+std::exponential_distribution<double> distribution(SpawnScaler);
+void enemySpawner(float deltatime){
+
+	int x=camera->getX();
+	if(x>maxx||x<minx){
+		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
+			enemy = new Enemy();
+			enemy->y=(rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin;
+			gameObjects.push_back(enemy);
+			if(abs(player->angle-90)%180>90){
+				enemy->x=x-10;
+
+			}else{
+				enemy->x=x+WIDTH+10;
+			}
+			
+		}
+	}
+
+	if(maxx<x)
+		maxx=x;
+	if(minx>x)
+		minx=x;
+}
+
+
 void display() {
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
@@ -93,6 +127,10 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
+
+
+
+	enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime);
 	drawUI(deltaTime);
