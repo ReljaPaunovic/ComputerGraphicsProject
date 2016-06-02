@@ -11,7 +11,15 @@ public:
 	void render();
 	void onCollide(GameObject* other);
 
+	void setHealth(float value) {
+		health = value;
+	}
+	float getHealth() {
+		return health;
+	}
+
 private:
+	float health = 10;
 	GLuint texture;
 };
 

@@ -16,8 +16,10 @@
 #include "Enemy.h"
 #include <random>
 #include <cmath>
+#include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include "main.h"
 
 
 const int WIDTH = 800;
@@ -77,11 +79,12 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 }
 
 void checkCollisions() {
-	int size = gameObjects.size();
+	std::vector<GameObject*> gameObjectsCopy = gameObjects;
+	int size = gameObjectsCopy.size();
 	// If needed, implement better
 	for (int i = 0; i < size; i++) {
 		for (int j = i + 1; j < size; j++) {	
-			checkCollision(gameObjects[i], gameObjects[j]);
+			checkCollision(gameObjectsCopy[i], gameObjectsCopy[j]);
 		}
 	}
 
@@ -130,9 +133,6 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-
-
-
 	enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime);
@@ -186,8 +186,8 @@ void drawUI(float deltaTime) {
 
 	glBegin(GL_QUADS);
 		glVertex2f(0, 0);
-		glVertex2f(player->getHealth(), 0);
-		glVertex2f(player->getHealth(), 1);
+		glVertex2f(std::max(player->getHealth(),0.0f), 0);
+		glVertex2f(std::max(player->getHealth(),0.0f), 1);
 		glVertex2f(0, 1);
 	glEnd();
 }

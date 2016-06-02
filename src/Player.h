@@ -24,6 +24,12 @@ public:
 	float getRotationRight() {
 		return rotationRight;
 	}
+	void setHealth(float value) {
+		health = value;
+	}
+	float getHealth() {
+		return health;
+	}
 
 private:
 	float health = 80;

@@ -5,6 +5,8 @@
 #include <cmath>
 #include <vector>
 #include <stb_image.h>
+#include "main.h"
+#include <algorithm>
 #define PI 3.14
 
 
@@ -17,7 +19,7 @@ Player::Player()
 	y = 300;
 	cx = 48;
 	cy = 48;
-	collider = new Collider(90,90);
+	collider = new Collider(35);
 
 	// Load and create texture
 	int textureWidth, textureHeight;
@@ -64,6 +66,8 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 int lastshot=999999;
 
 void Player::tick(float deltaTime) {
+	if (health <= 0)
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	angle -= 180.0f * rotationLeft * deltaTime;
 	angle += 180.0f * rotationRight * deltaTime;
 	// To keep it in range (0, 359)
@@ -77,7 +81,7 @@ void Player::tick(float deltaTime) {
 
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
-	printf("angle = %g\n",angle);
+	//printf("angle = %g\n",angle);
 	if (-y > upperBoundary) {
 		if (angle <= 270 && angle >= 90)
 			angle += (1 + y / upperBoundary);
@@ -98,10 +102,9 @@ void Player::onCollide(GameObject* other) {
 	// TODO
 
 	//if (other->)
-		printf("Player -------> Enemy\n");
+		//printf("Player -------> Enemy\n");
 		//x -= cos(Util::deg2rad(angle));
 		//y -= sin(Util::deg2rad(angle));
-		velocity = 0;
 }
 
 void Player::render() {
@@ -147,7 +150,7 @@ void Player::render() {
 		double angletemp = 2 * PI * i / 300;
 		double xtemp = cos(angletemp);
 		double ytemp = sin(angletemp);
-		glVertex2d(90 * xtemp, 90 * ytemp);
+		glVertex2d(35 * xtemp, 35 * ytemp);
 	}
 	glEnd();
 	// ******

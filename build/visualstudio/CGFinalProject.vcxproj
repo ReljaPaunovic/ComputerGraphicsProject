@@ -20,7 +20,6 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Player.cpp" />
     <ClCompile Include="..\..\src\Projectile.cpp" />
-    <ClCompile Include="BossSegment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Background.h" />
@@ -35,6 +34,7 @@
     <ClInclude Include="..\..\src\Stopwatch.h" />
     <ClInclude Include="..\..\src\Util.h" />
     <ClInclude Include="BossSegment.h" />
+    <ClInclude Include="..\..\src\main.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{12FA565B-5765-4586-B79A-3666B92A5BF7}</ProjectGuid>
