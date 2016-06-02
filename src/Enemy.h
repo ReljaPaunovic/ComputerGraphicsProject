@@ -6,5 +6,9 @@ class Enemy :
 public:
 	Enemy();
 	~Enemy();
+
+	void tick(float deltaTime);
+	void render();
+	void onCollide(GameObject* other);
 };
 

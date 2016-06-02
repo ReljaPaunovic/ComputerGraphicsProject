@@ -19,6 +19,13 @@ public:
 
 	float getHealth() const;
 
+	float getRotationLeft() {
+		return rotationLeft;
+	}
+	float getRotationRight() {
+		return rotationRight;
+	}
+
 private:
 	float health = 80;
 

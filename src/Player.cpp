@@ -6,6 +6,7 @@
 #include <vector>
 #include <stb_image.h>
 
+
 extern std::vector<GameObject*> gameObjects;
 
 Player::Player()
@@ -14,12 +15,12 @@ Player::Player()
 	y = 300;
 	cx = 48;
 	cy = 48;
-	//collider = new CircleCollider(5);
+	collider = new Collider(5);
 
 	// Load and create texture
 	int textureWidth, textureHeight;
 	int textureComponents;
-	stbi_uc* pixels = stbi_load("textures/spaceship.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load("../../out/textures/spaceship.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -62,6 +63,11 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 void Player::tick(float deltaTime) {
 	angle -= 180.0f * rotationLeft * deltaTime;
 	angle += 180.0f * rotationRight * deltaTime;
+	// To keep it in range (0, 359)
+	if (angle < 0)
+		angle += 360;
+	if (angle >= 360)
+		angle -= 360;
 
 	velocity += accelerationForward;
 	velocity -= accelerationBackward;
@@ -105,4 +111,5 @@ void Player::render() {
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+	resetTransformation();
 }

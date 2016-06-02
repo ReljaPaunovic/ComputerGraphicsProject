@@ -12,6 +12,7 @@
 #include "Background.h"
 #include "Stopwatch.h"
 #include <vector>
+#include "Enemy.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -22,6 +23,7 @@ const int HEIGHT = 600;
 std::vector<GameObject*> gameObjects;
 Player* player;
 Camera* camera;
+Enemy* enemy;
 Background* background;
 
 Stopwatch frameTimer;
@@ -125,7 +127,11 @@ int main(int argc, char** argv) {
 	player = new Player();
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
+	enemy = new Enemy();
+	gameObjects.push_back(enemy);
 	gameObjects.push_back(player);
+
+	
 
 	// Start game
 	glutMainLoop();
