@@ -77,7 +77,7 @@ void Player::tick(float deltaTime) {
 
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
-	printf("angle = %g\n",angle);
+	//printf("angle = %g\n",angle);
 	if (-y > upperBoundary) {
 		//if(angle >= 270)
 			angle -= (1 + y / upperBoundary);

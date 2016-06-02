@@ -17,6 +17,7 @@
 #include <vector>
 #include <iostream>
 #include "Enemy.h"
+#include "Util.h"
 #include <random>
 #include <cmath>
 
@@ -37,6 +38,8 @@ Stopwatch frameTimer;
 // Post-processing related objects
 GLuint framebuffer;
 GLuint texColorBuffer;
+
+GLuint shaderProgram;
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
@@ -126,6 +129,41 @@ void initDisplay() {
 
 	// Set up clear values
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Create shader program
+	std::string vertexShaderSrc = Util::readFile("shaders/postprocessing.vert");
+	std::string fragShaderSrc = Util::readFile("shaders/postprocessing.frag");
+	const char* vertexShaderSrcPtr = vertexShaderSrc.c_str();
+	const char* fragShaderSrcPtr = fragShaderSrc.c_str();
+
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSrcPtr, nullptr);
+	glCompileShader(vertexShader);
+
+	char buffer[512];
+	glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
+
+	std::cerr << "vertex shader:" << std::endl;
+	std::cerr << buffer << std::endl;
+
+	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragShader, 1, &fragShaderSrcPtr, nullptr);
+	glCompileShader(fragShader);
+
+	glGetShaderInfoLog(fragShader, 512, NULL, buffer);
+
+	std::cerr << "fragment shader:" << std::endl;
+	std::cerr << buffer << std::endl;
+
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, fragShader);
+	glAttachShader(shaderProgram, vertexShader);
+	glLinkProgram(shaderProgram);
+
+	glGetProgramInfoLog(shaderProgram, 512, nullptr, buffer);
+
+	std::cerr << "link log:" << std::endl;
+	std::cerr << buffer << std::endl;
 }
 
 int minx=0;
@@ -166,6 +204,7 @@ void display() {
 	
 	// Render graphics to post-processing buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glUseProgram(0);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -178,6 +217,7 @@ void display() {
 
 	// Render scene with post-processing shader
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(shaderProgram);
 
 	drawPostProcessing(deltaTime);
 
@@ -202,16 +242,16 @@ void drawPostProcessing(float deltaTime) {
 		glColor3f(1, 1, 1);
 
 		glTexCoord2f(0, 1);
-		glVertex2i(-1, 1);
+		glVertex2f(-1, 1);
 
 		glTexCoord2f(1, 1);
-		glVertex2i(1, 1);
+		glVertex2f(1, 1);
 		
 		glTexCoord2f(1, 0);
-		glVertex2i(1, -1);
+		glVertex2f(1, -1);
 
 		glTexCoord2f(0, 0);
-		glVertex2i(-1, -1);
+		glVertex2f(-1, -1);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 }
