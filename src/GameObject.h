@@ -24,6 +24,7 @@ public:
 	void resetTransformation() {
 		glPopMatrix();
 	}
+
 	float x = 0, y = 0;
 
 	// Center of object

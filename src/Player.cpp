@@ -5,7 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <stb_image.h>
-
+#define PI 3.14
 
 extern std::vector<GameObject*> gameObjects;
 
@@ -15,7 +15,7 @@ Player::Player()
 	y = 300;
 	cx = 48;
 	cy = 48;
-	collider = new Collider(5);
+	collider = new Collider(90);
 
 	// Load and create texture
 	int textureWidth, textureHeight;
@@ -85,6 +85,10 @@ void Player::tick(float deltaTime) {
 
 void Player::onCollide(GameObject* other) {
 	// TODO
+	printf("Player -------> Enemy\n");
+    x -= cos(Util::deg2rad(angle));
+	y -= sin(Util::deg2rad(angle));
+	velocity = 0;
 }
 
 void Player::render() {
@@ -111,5 +115,17 @@ void Player::render() {
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+	// For testing purposes, collision circles
+	glPushMatrix();
+	glTranslatef((float)cx, (float)cy, 0.0f);
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i <= 300; i++) {
+		double angletemp = 2 * PI * i / 300;
+		double xtemp = cos(angletemp);
+		double ytemp = sin(angletemp);
+		glVertex2d(90 * xtemp, 90 * ytemp);
+	}
+	glPopMatrix();
+	// *****
 	resetTransformation();
 }

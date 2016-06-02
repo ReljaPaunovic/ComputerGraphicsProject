@@ -1,6 +1,8 @@
 #include "Enemy.h"
+#include <stdio.h>
 #include <GL/GL.h>
-
+#define PI 3.14
+#include <cmath>
 
 Enemy::Enemy()
 {
@@ -9,7 +11,7 @@ Enemy::Enemy()
 	cx = 48;
 	cy = 48;
 	angle = 0;
-	collider = new Collider(5);
+	collider = new Collider(90);
 }
 
 
@@ -30,6 +32,19 @@ void Enemy::render() {
 		glVertex2f(96, 96);
 		glVertex2f(0, 96);
 	glEnd();
+
+	// For testing purposes, collision circles
+	glTranslatef((float)cx, (float)cy, 0.0f);
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i <= 300; i++) {
+		double angletemp = 2 * PI * i / 300;
+		double xtemp = cos(angletemp);
+		double ytemp = sin(angletemp);
+		glVertex2d(90 * xtemp, 90 * ytemp);
+	}
+	glEnd();
+	// ******
+
 	resetTransformation();
 
 }
@@ -39,6 +54,6 @@ void Enemy::tick(float deltaTime) {
 }
 
 void Enemy::onCollide(GameObject* other) {
-
+	printf("Enemy ---> Player\n");
 
 }
