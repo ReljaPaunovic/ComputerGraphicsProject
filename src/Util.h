@@ -25,6 +25,8 @@ namespace Util {
 		file.read(fileData.data(), fileSize);
 		file.close();
 
+		fileData.push_back(0);
+
 		return fileData.data();
 	}
 }
