@@ -54,18 +54,17 @@ void Enemy::render() {
 
 	glBegin(GL_QUADS);
 		glColor3f(1.0f, 1.0f, 1.0f);
-		
-		glTexCoord2f(0, 0);
 		glVertex2f(0, 0);
+		glTexCoord2f(0, 0);
 
-		glTexCoord2f(1, 0);
 		glVertex2f(96, 0);
+		glTexCoord2f(1, 0);
 
-		glTexCoord2f(1, 1);
 		glVertex2f(96, 96);
+		glTexCoord2f(1, 1);
 
-		glTexCoord2f(0, 1);
 		glVertex2f(0, 96);
+		glTexCoord2f(0, 1);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
