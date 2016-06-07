@@ -1,3 +1,5 @@
+#version 150
+
 uniform sampler2D tex;
 
 uniform vec2 playerPosition;
@@ -7,9 +9,9 @@ float viewDistance = 300.0;
 
 void main() {
 
-	float averageR[5] =  float[5](0,0,0,0,0);
-	float averageG[5] =  float[5](0,0,0,0,0);
-	float averageB[5] =  float[5](0,0,0,0,0);
+	float averageR[5] =  float[5](0.0,0.0,0.0,0.0,0.0);
+	float averageG[5] =  float[5](0.0,0.0,0.0,0.0,0.0);
+	float averageB[5] =  float[5](0.0,0.0,0.0,0.0,0.0);
 	int counts[5] =  int[5](0,0,0,0,0);
     /*vec4 originalColor = vec4(0,0,0,0);
 	for(float x = 0.0; x <= 10.0/800.0; x=x+1.0/800.0) {
@@ -31,7 +33,7 @@ void main() {
 		}
 	}
 	
-    gl_FragColor = vec4(averageR,averageG,averageB,1);
+    gl_FragColor = vec4(averageR,averageG,averageB,1);*/
 }
 
 
