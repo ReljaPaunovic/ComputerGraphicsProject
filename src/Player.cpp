@@ -1,13 +1,11 @@
 #include "Player.h"
 #include "Util.h"
 #include "Projectile.h"
-#include <GL/freeglut.h>
 #include <cmath>
 #include <vector>
 #include <stb_image.h>
 #include "main.h"
 #include <algorithm>
-#include "main.h"
 #define PI 3.14
 
 
