@@ -33,6 +33,5 @@ void main() {
 			max=countss[i];
 		}
 	}
-	
     gl_FragColor = vec4(averageR[max],averageG[max],averageB[max],1.0f);
 }
