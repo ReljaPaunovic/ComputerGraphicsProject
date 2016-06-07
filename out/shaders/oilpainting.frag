@@ -5,8 +5,8 @@ uniform sampler2D tex;
 uniform vec2 playerPosition;
 uniform float time;
 
-float viewDistance = 300.0;
 
+float viewDistance = 300.0;
 void main() {
 
 	float averageR[5] =  float[5](0.0,0.0,0.0,0.0,0.0);
@@ -40,7 +40,3 @@ void main() {
     gl_FragColor = vec4(rr*250.0,rg*250.0,rb*250.0,1.0f);
 
 }
-/*
-
-
-*/

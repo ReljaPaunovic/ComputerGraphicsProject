@@ -156,8 +156,8 @@ void initDisplay() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Create shader programs
-	ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/postprocessing.frag");
-	ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+	ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/empty.frag");
+	ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/empty.frag");
 
 	for (int i = 0; i < 2; i++) {
 		playerPositionUniformLoc[i] = glGetUniformLocation(ppShaders[i], "playerPosition");
