@@ -6,18 +6,17 @@ uniform float time;
 float viewDistance = 300.0;
 
 void main() {
-
-	float averageR[5] =  float[5](0,0,0,0,0);
-	float averageG[5] =  float[5](0,0,0,0,0);
-	float averageB[5] =  float[5](0,0,0,0,0);
-	int counts[5] =  int[5](0,0,0,0,0);
+	int[] counts = new int[];
+	double[] averageR = new double[10];
+	double[] averageG = new double[10];
+	double[] averageB = new double[10];
     /*vec4 originalColor = vec4(0,0,0,0);
 	for(float x = 0.0; x <= 10.0/800.0; x=x+1.0/800.0) {
 		for(float y = 0.0; y <= 10.0/800.0; y=y+1.0/800.0) {
 			float r=(tex,gl_TexCoord[0].xy+vec2(x,y).r);
 			float g=(tex,gl_TexCoord[0].xy+vec2(x,y).g);
 			float b=(tex,gl_TexCoord[0].xy+vec2(x,y).b);
-			int ind=(int)((r+g+b)*1.66667);
+			int ind=(int)(r+g+b*3.33);
 			averageR[ind]+=r;
 			averageB[ind]+=g;
 			averageG[ind]+=b;
@@ -26,12 +25,19 @@ void main() {
 	}	
 	int max=0;
 	for(int i=0;i<10;i++){
-		if(max<counts[i]){
+		if(max<counts[i])
 			max=counts[i];
-		}
 	}
-	
-    gl_FragColor = vec4(averageR,averageG,averageB,1);
+
+    gl_FragColor = originalColor/100;*/
+
+    // Show light around player
+    float d = distance(gl_FragCoord.xy, playerPosition);
+    d /= max(1.0, viewDistance - time * 10.0);
+    d = 1.0 - d;
+
+    vec4 multiplier = vec4(d, d, d, 1.0);
+    gl_FragColor = multiplier * texture2D(tex, gl_TexCoord[0].xy);
 }
 
 
