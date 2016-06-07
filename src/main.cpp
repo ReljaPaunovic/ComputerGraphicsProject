@@ -4,10 +4,8 @@
 *   This program draws a red rectangle on a blue background.
 *
 */
-
 #define GLEW_STATIC
 #include <GL/glew.h>
-
 #include <GL/glut.h>
 #include "GameObject.h"
 #include "Player.h"
@@ -20,9 +18,12 @@
 #include "Util.h"
 #include <random>
 #include <cmath>
+#include <algorithm>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include "main.h"
+
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -34,12 +35,15 @@ Enemy* enemy;
 Background* background;
 
 Stopwatch frameTimer;
+Stopwatch gameTimer;
 
 // Post-processing related objects
 GLuint framebuffer;
 GLuint texColorBuffer;
 
 GLuint shaderProgram;
+GLint playerPositionUniformLoc;
+GLint timeUniformLoc;
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
@@ -88,11 +92,12 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 }
 
 void checkCollisions() {
-	int size = gameObjects.size();
+	std::vector<GameObject*> gameObjectsCopy = gameObjects;
+	int size = gameObjectsCopy.size();
 	// If needed, implement better
 	for (int i = 0; i < size; i++) {
 		for (int j = i + 1; j < size; j++) {	
-			checkCollision(gameObjects[i], gameObjects[j]);
+			checkCollision(gameObjectsCopy[i], gameObjectsCopy[j]);
 		}
 	}
 
@@ -164,29 +169,34 @@ void initDisplay() {
 
 	std::cerr << "link log:" << std::endl;
 	std::cerr << buffer << std::endl;
+
+	playerPositionUniformLoc = glGetUniformLocation(shaderProgram, "playerPosition");
+	timeUniformLoc = glGetUniformLocation(shaderProgram, "time");
 }
 
 int minx=0;
 int maxx=0;
-const double spawnFactor=1000;
-const double SpawnScaler=2;
-const int spawnRangeMin=-200;
-const int spawnRangeMax=1200;
+const double spawnFactor = 1000;
+const double SpawnScaler = 2;
+const int spawnRangeMin = -400;
+const int spawnRangeMax = 1200;
 std::default_random_engine generator;
 std::exponential_distribution<double> distribution(SpawnScaler);
+
 void enemySpawner(float deltatime){
 
-	int x=camera->getX();
+	int x=(int) camera->getX();
 	if(x>maxx||x<minx){
 		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
 			enemy = new Enemy();
-			enemy->y=(rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin;
+			enemy->y=(float) ((rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin);
 			gameObjects.push_back(enemy);
+			//if( (int)abs(player->angle - 90) % 180 > 90 ){
 			if(abs((int) (player->angle-90))%180>90){
-				enemy->x=x-10;
+				enemy->x=x-10.0f;
 
 			}else{
-				enemy->x=x+WIDTH+10;
+				enemy->x=x+WIDTH+10.0f;
 			}
 			
 		}
@@ -202,24 +212,34 @@ void display() {
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
 	
-	// Render graphics to post-processing buffer
+	// Draw game world to post-processing buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glUseProgram(0);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-
 	enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime);
-	drawUI(deltaTime);
 
 	// Render scene with post-processing shader
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Set up shader
 	glUseProgram(shaderProgram);
+	if (playerPositionUniformLoc != -1) {
+		glUniform2f(playerPositionUniformLoc, player->getScreenPos(camera).x, player->getScreenPos(camera).y);
+	}
+	if (timeUniformLoc != -1) {
+		glUniform1f(timeUniformLoc, gameTimer.time());
+	}
 
 	drawPostProcessing(deltaTime);
+
+	// Draw UI
+	glUseProgram(0);
+	drawUI(deltaTime);
 
 	glutSwapBuffers();
 
@@ -299,8 +319,8 @@ void drawUI(float deltaTime) {
 
 	glBegin(GL_QUADS);
 		glVertex2f(0, 0);
-		glVertex2f(player->getHealth(), 0);
-		glVertex2f(player->getHealth(), 1);
+		glVertex2f(std::max(player->getHealth(),0.0f), 0);
+		glVertex2f(std::max(player->getHealth(),0.0f), 1);
 		glVertex2f(0, 1);
 	glEnd();
 }

@@ -18,7 +18,7 @@ namespace Util {
 	inline std::string readFile(const std::string& filename) {
 		std::ifstream file(filename, std::ios::ate);
 
-		size_t fileSize = file.tellg();
+		size_t fileSize = (size_t) file.tellg();
 		std::vector<char> fileData(fileSize);
 
 		file.seekg(0, std::ios::beg);

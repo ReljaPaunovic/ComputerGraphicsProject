@@ -33,6 +33,8 @@
     <ClInclude Include="..\..\src\Projectile.h" />
     <ClInclude Include="..\..\src\Stopwatch.h" />
     <ClInclude Include="..\..\src\Util.h" />
+    <ClInclude Include="BossSegment.h" />
+    <ClInclude Include="..\..\src\main.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{12FA565B-5765-4586-B79A-3666B92A5BF7}</ProjectGuid>
@@ -79,7 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glm;$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -97,7 +99,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glm;$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
