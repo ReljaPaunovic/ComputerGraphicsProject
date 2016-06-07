@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Background.h"
 #include "Stopwatch.h"
+#include "Framebuffer.h"
 #include <vector>
 #include <iostream>
 #include "Enemy.h"
@@ -20,9 +21,10 @@
 #include <cmath>
 #include <algorithm>
 
+#include "main.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#include "main.h"
 
 
 const int WIDTH = 800;
@@ -38,16 +40,14 @@ Stopwatch frameTimer;
 Stopwatch gameTimer;
 
 // Post-processing related objects
-GLuint framebuffer;
-GLuint texColorBuffer;
-
-GLuint shaderProgram;
-GLint playerPositionUniformLoc;
-GLint timeUniformLoc;
+Framebuffer framebuffers[2];
+GLuint ppShaders[2];
+GLint playerPositionUniformLoc[2];
+GLint timeUniformLoc[2];
 
 void drawGameObjects(float deltaTime);
 void drawUI(float deltaTime);
-void drawPostProcessing(float deltaTime);
+void drawPostProcessing(float deltaTime, int pass);
 
 double distanceCalculate(double x1, double y1, double x2, double y2)
 {
@@ -107,37 +107,9 @@ void checkCollisions() {
 	std::cerr << "OpenGL: " << message << std::endl;
 }*/
 
-void initDisplay() {
-//	glEnable(GL_DEBUG_OUTPUT);
-//	glDebugMessageCallback(debugCallback, nullptr);
-	
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-	// Create texture to hold color buffer
-	glGenTextures(1, &texColorBuffer);
-	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-	// Create renderbuffer for depth buffer
-	GLuint rboDepthStencil;
-	glGenRenderbuffers(1, &rboDepthStencil);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboDepthStencil);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rboDepthStencil);
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// Set up clear values
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-	// Create shader program
-	std::string vertexShaderSrc = Util::readFile("shaders/postprocessing.vert");
-	std::string fragShaderSrc = Util::readFile("shaders/postprocessing.frag");
+GLuint createShaderProgram(const std::string& vertexShaderFile, const std::string& fragShaderFile) {
+	std::string vertexShaderSrc = Util::readFile(vertexShaderFile);
+	std::string fragShaderSrc = Util::readFile(fragShaderFile);
 	const char* vertexShaderSrcPtr = vertexShaderSrc.c_str();
 	const char* fragShaderSrcPtr = fragShaderSrc.c_str();
 
@@ -160,7 +132,7 @@ void initDisplay() {
 	std::cerr << "fragment shader:" << std::endl;
 	std::cerr << buffer << std::endl;
 
-	shaderProgram = glCreateProgram();
+	GLuint shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, fragShader);
 	glAttachShader(shaderProgram, vertexShader);
 	glLinkProgram(shaderProgram);
@@ -170,8 +142,27 @@ void initDisplay() {
 	std::cerr << "link log:" << std::endl;
 	std::cerr << buffer << std::endl;
 
-	playerPositionUniformLoc = glGetUniformLocation(shaderProgram, "playerPosition");
-	timeUniformLoc = glGetUniformLocation(shaderProgram, "time");
+	return shaderProgram;
+}
+
+void initDisplay() {
+//	glEnable(GL_DEBUG_OUTPUT);
+//	glDebugMessageCallback(debugCallback, nullptr);
+	
+	framebuffers[0] = Framebuffer(WIDTH, HEIGHT);
+	framebuffers[1] = Framebuffer(WIDTH, HEIGHT);
+
+	// Set up clear values
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Create shader programs
+	ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/postprocessing.frag");
+	ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+
+	for (int i = 0; i < 2; i++) {
+		playerPositionUniformLoc[i] = glGetUniformLocation(ppShaders[i], "playerPosition");
+		timeUniformLoc[i] = glGetUniformLocation(ppShaders[i], "time");
+	}
 }
 
 int minx=0;
@@ -213,7 +204,7 @@ void display() {
 	frameTimer.restart();
 	
 	// Draw game world to post-processing buffer
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0].fbo);
 	glUseProgram(0);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -223,19 +214,31 @@ void display() {
 
 	drawGameObjects(deltaTime);
 
-	// Render scene with post-processing shader
+	// Render quad with first post-processing pass to second
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1].fbo);
+	glUseProgram(ppShaders[0]);
+
+	if (playerPositionUniformLoc[0] != -1) {
+		glUniform2f(playerPositionUniformLoc[0], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
+	}
+	if (timeUniformLoc[0] != -1) {
+		glUniform1f(timeUniformLoc[0], gameTimer.time());
+	}
+
+	drawPostProcessing(deltaTime, 0);
+
+	// Render scene with second post-processing pass
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(ppShaders[1]);
 
-	// Set up shader
-	glUseProgram(shaderProgram);
-	if (playerPositionUniformLoc != -1) {
-		glUniform2f(playerPositionUniformLoc, player->getScreenPos(camera).x, player->getScreenPos(camera).y);
+	if (playerPositionUniformLoc[1] != -1) {
+		glUniform2f(playerPositionUniformLoc[1], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
 	}
-	if (timeUniformLoc != -1) {
-		glUniform1f(timeUniformLoc, gameTimer.time());
+	if (timeUniformLoc[1] != -1) {
+		glUniform1f(timeUniformLoc[1], gameTimer.time());
 	}
 
-	drawPostProcessing(deltaTime);
+	drawPostProcessing(deltaTime, 1);
 
 	// Draw UI
 	glUseProgram(0);
@@ -246,7 +249,7 @@ void display() {
 	glutPostRedisplay();
 }
 
-void drawPostProcessing(float deltaTime) {
+void drawPostProcessing(float deltaTime, int pass) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 
 	// Reset projection
@@ -257,7 +260,7 @@ void drawPostProcessing(float deltaTime) {
 	glLoadIdentity();
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, framebuffers[pass].colorTexture);
 	glBegin(GL_QUADS);
 		glColor3f(1, 1, 1);
 
