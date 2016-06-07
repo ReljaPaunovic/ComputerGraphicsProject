@@ -13,13 +13,13 @@ void main() {
     /*vec4 originalColor = vec4(0,0,0,0);
 	for(float x = 0.0; x <= 10.0/800.0; x=x+1.0/800.0) {
 		for(float y = 0.0; y <= 10.0/800.0; y=y+1.0/800.0) {
-			float r=(tex,gl_TexCoord[0].xy+vec2(x,y).r);
-			float g=(tex,gl_TexCoord[0].xy+vec2(x,y).g);
-			float b=(tex,gl_TexCoord[0].xy+vec2(x,y).b);
+			float r=texture2D(tex,tex,gl_TexCoord[0].xy+vec2(x,y)).r;
+			float g=texture2D(tex,tex,gl_TexCoord[0].xy+vec2(x,y)).g;
+			float b=texture2D(tex,tex,gl_TexCoord[0].xy+vec2(x,y)).b;
 			int ind=(int)(r+g+b*3.33);
-			averageR[ind]+=r;
-			averageB[ind]+=g;
-			averageG[ind]+=b;
+			averageR[ind]=averageR[ind]+r;
+			averageB[ind]=averageB[ind]+g;
+			averageG[ind]=averageG[ind]+b;
 			counts[ind]++;
 		}	
 	}	
