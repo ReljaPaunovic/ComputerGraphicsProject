@@ -25,7 +25,7 @@ void main() {
 		}	
 	}	
 	int max=0;
-	for(int i=0;i<10;i++){
+	for(int i=0;i<5;i++){
 		if(max<counts[i]){
 			max=counts[i];
 		}
