@@ -45,10 +45,6 @@ GLuint ppShaders[2];
 GLint playerPositionUniformLoc[2];
 GLint timeUniformLoc[2];
 
-void drawGameObjects(float deltaTime);
-void drawUI(float deltaTime);
-void drawPostProcessing(float deltaTime, int pass);
-
 double distanceCalculate(double x1, double y1, double x2, double y2)
 {
 	double x = x1 - x2;
@@ -156,13 +152,8 @@ void initDisplay() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Create shader programs
-	ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/empty.frag");
-	ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/empty.frag");
 
-	for (int i = 0; i < 2; i++) {
-		playerPositionUniformLoc[i] = glGetUniformLocation(ppShaders[i], "playerPosition");
-		timeUniformLoc[i] = glGetUniformLocation(ppShaders[i], "time");
-	}
+	setShader(1);
 }
 
 int minx=0;
@@ -328,6 +319,28 @@ void drawUI(float deltaTime) {
 	glEnd();
 }
 
+void setShader(int i) {
+	if (i == 0) {
+		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/postprocessing.frag");
+		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+	} else if (i == 1) {
+		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/oilpainting.frag");
+		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+	} else if (i == 2) {
+		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/headvission.frag");
+		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+	} else {
+		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/HandDrawn.frag");
+		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+
+	}
+
+	for (int i = 0; i < 2; i++) {
+		playerPositionUniformLoc[i] = glGetUniformLocation(ppShaders[i], "playerPosition");
+		timeUniformLoc[i] = glGetUniformLocation(ppShaders[i], "time");
+	}
+}
+
 //take keyboard input into account
 void keyboardDown(unsigned char key, int x, int y) {
 	player->handleKeyboard(key, true);
@@ -337,6 +350,13 @@ void keyboardUp(unsigned char key, int x, int y) {
 	player->handleKeyboard(key, false);
 
 	switch (key) {
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+		setShader(key - '1');
+		break;
+
 	case 27:
 		exit(0);
 	}
