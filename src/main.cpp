@@ -45,6 +45,8 @@ GLuint ppShaders[2];
 GLint playerPositionUniformLoc[2];
 GLint timeUniformLoc[2];
 
+GLint mountainShader;
+
 double distanceCalculate(double x1, double y1, double x2, double y2)
 {
 	double x = x1 - x2;
@@ -116,7 +118,7 @@ GLuint createShaderProgram(const std::string& vertexShaderFile, const std::strin
 	char buffer[512];
 	glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
 
-	std::cerr << "vertex shader:" << std::endl;
+	std::cerr << "vertex shader (" << vertexShaderFile << "):" << std::endl;
 	std::cerr << buffer << std::endl;
 
 	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -125,7 +127,7 @@ GLuint createShaderProgram(const std::string& vertexShaderFile, const std::strin
 
 	glGetShaderInfoLog(fragShader, 512, NULL, buffer);
 
-	std::cerr << "fragment shader:" << std::endl;
+	std::cerr << "fragment shader (" << fragShaderFile << "):" << std::endl;
 	std::cerr << buffer << std::endl;
 
 	GLuint shaderProgram = glCreateProgram();
@@ -153,6 +155,8 @@ void initDisplay() {
 
 	// Create shader programs
 	setShader(0);
+
+	mountainShader = createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
 }
 
 int minx=0;
@@ -275,7 +279,9 @@ void drawGameObjects(float deltaTime) {
 	camera->setProjection();
 
 	// Draw background
+	glUseProgram(mountainShader);
 	background->render(camera->getX());
+	glUseProgram(0);
 
 	// Copy is made such that game objects can remove themselves or spawn new game objects
 	std::vector<GameObject*> gameObjectsCopy = gameObjects;
@@ -362,6 +368,7 @@ void keyboardUp(unsigned char key, int x, int y) {
 }
 
 int main(int argc, char** argv) {
+	// TODO: Only apply oil painting to terrain
 	// Initialize GLUT
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);

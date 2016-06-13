@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/freeglut.h>
+#include <GL/glew.h>
 #include "Collider.h"
 #include <stb_image.h>
 #include <glm/gtc/matrix_transform.hpp>

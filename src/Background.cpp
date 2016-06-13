@@ -1,6 +1,7 @@
 #include "Background.h"
 #include <iostream>
 #include <math.h>
+#include <GL/glew.h>
 
 float sCurve( float x )
 {
@@ -74,9 +75,15 @@ void Background::render(float viewx){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	GLint shader;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &shader);
+	GLint uniLayer = glGetUniformLocation(shader, "layer");
 	 
+	glUniform1i(uniLayer, 0);
 	layer1((int) viewx,0.0084f,200,0.15f,0.07f,0.03f,300);
+	glUniform1i(uniLayer, 1);
 	layer1((int) viewx,0.014f,300,0.3f,0.15f,0.07f,0.16f);
+	glUniform1i(uniLayer, 2);
 	layer1((int) viewx,0.01f,200,0.6f,0.3f,0.15f,400);
 
 
