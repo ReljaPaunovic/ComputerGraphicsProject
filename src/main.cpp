@@ -279,7 +279,7 @@ void drawGameObjects(float deltaTime) {
 	camera->setProjection();
 
 	// Draw background
-	glUseProgram(mountainShader);
+//	glUseProgram(mountainShader);
 	background->render(camera->getX());
 	glUseProgram(0);
 

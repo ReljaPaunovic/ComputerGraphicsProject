@@ -40,37 +40,46 @@ float mulDelSmoothNoise1D(float x){
 
 }
 
+float getCoord(float x, float z , float freq1){
+	float h1=mulDelSmoothNoise1D(((float)(x)*freq1));
+	h1=	h1+mulDelSmoothNoise1D(((float)(z+309.2)*freq1));
+	
 
+	h1=(h1/2)*(z+10.01); 
+	return h1/100;
+}
 
 const int screenWidth=800;
 
 const int screenheight=800;
-void Background::layer1(int viewx,float freq1,float maxL1Height,float red,float green, float blue ,float xoff){
+void Background::layer1(int viewx,float freq1){
 
-	float h1=mulDelSmoothNoise1D(((float)(-1+viewx+xoff)*freq1));	
-	h1=(h1*h1)/h1;
-	h1=h1*maxL1Height;
-	h1=screenheight-h1-(screenWidth-maxL1Height);
-	for(int x=0;x<screenWidth-1;x++){
-		float h2=mulDelSmoothNoise1D((((float)(viewx+x+xoff))*freq1));	
-		h2=(h2*h2)/h2;
-		h2=h2*maxL1Height;
-		h2=screenheight-h2-(screenWidth-maxL1Height);
-		glBegin(GL_QUADS);
 
-			glColor3f(red, green, blue);
-			glVertex2i(viewx+x, (int) h2);
-			glVertex2i(viewx+x, screenheight);
-			glVertex2i(viewx+x-1, screenheight);
-			glVertex2i(viewx+x-1, (int) h1);
-		glEnd();
-		h1=h2;
+
+
+
+	for(int depth=1;depth<80;depth=depth+5){
+
+			glBegin(GL_TRIANGLE_STRIP);
+		for(int x=0;x<screenWidth-1;x=x+20){
+
+
+				glColor3f(depth/80.0f,0,0);
+
+
+				float h2=getCoord(viewx+x,depth,freq1);		
+				glVertex3f(viewx+x,depth,h2 );
+				 h2=getCoord((viewx+x),(depth+5)/8.0f,freq1);		
+				glVertex3f((viewx+x)/800.0f,h2,(depth+5)/8.0f);
+
+
 
 	}
-
-
+			glEnd();		
+}
 
 }
+
 void Background::render(float viewx){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -78,13 +87,9 @@ void Background::render(float viewx){
 	GLint shader;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &shader);
 	GLint uniLayer = glGetUniformLocation(shader, "layer");
-	 
+	
 	glUniform1i(uniLayer, 0);
-	layer1((int) viewx,0.0084f,200,0.15f,0.07f,0.03f,300);
-	glUniform1i(uniLayer, 1);
-	layer1((int) viewx,0.014f,300,0.3f,0.15f,0.07f,0.16f);
-	glUniform1i(uniLayer, 2);
-	layer1((int) viewx,0.01f,200,0.6f,0.3f,0.15f,400);
+	layer1((int) viewx,800);
 
 
 }

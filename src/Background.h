@@ -5,7 +5,7 @@ class Background
 public:
 	Background();
 	~Background();
-	void layer1(int ,float ,float ,float ,float, float,float);
+	void layer1(int ,float );
 	void render(float);
 };
 
