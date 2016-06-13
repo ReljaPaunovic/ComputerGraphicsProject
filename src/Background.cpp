@@ -41,13 +41,15 @@ float mulDelSmoothNoise1D(float x){
 }
 
 float getCoord(float x, float z , float freq1){
-	float h1=mulDelSmoothNoise1D(((float)(x)*freq1));
+	return 1;
+	
+/*	float h1=mulDelSmoothNoise1D(((float)(x)*freq1));
 	h1=	h1+mulDelSmoothNoise1D(((float)(z+309.2)*freq1));
 	
 
 	h1=(h1/2)*(z+10.01); 
 	return h1/100;
-}
+*/}
 
 const int screenWidth=800;
 
@@ -57,20 +59,21 @@ void Background::layer1(int viewx,float freq1){
 
 
 
-
-	for(int depth=1;depth<80;depth=depth+5){
+	int xstep=100;
+	int depthstep=5;
+	for(int depth=1;depth<80;depth=depth+depthstep){
 
 			glBegin(GL_TRIANGLE_STRIP);
-		for(int x=0;x<screenWidth-1;x=x+20){
+		for(int x=0;x<screenWidth-1;x=x+xstep){
 
 
-				glColor3f(depth/80.0f,0,0);
+				glColor3f(1,1,1);
 
 
-				float h2=getCoord(viewx+x,depth,freq1);		
+				float h2=getCoord(viewx+x,depth/8.0f,freq1);		
 				glVertex3f(viewx+x,depth,h2 );
-				 h2=getCoord((viewx+x),(depth+5)/8.0f,freq1);		
-				glVertex3f((viewx+x)/800.0f,h2,(depth+5)/8.0f);
+				 h2=getCoord((viewx+x),-(depth+depthstep)/8.0f,freq1);		
+				glVertex3f((viewx+x)/800.0f,h2,-(depth+5)/8.0f);
 
 
 
