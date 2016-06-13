@@ -154,9 +154,12 @@ void initDisplay() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Create shader programs
+
 	setShader(0);
 
 	mountainShader = createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
+
+	setShader(1);
 }
 
 int minx=0;
