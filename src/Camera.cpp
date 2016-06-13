@@ -3,7 +3,8 @@
 void Camera::setProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(x, x + width, y + height, y);
+	//gluOrtho2D(x, x + width, y + height, y);
+	glOrtho(x, x + width, y + height, y, -100, 100);
 }
 
 void Camera::updatePosition(Player* player) {

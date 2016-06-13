@@ -16,7 +16,9 @@
 #include <vector>
 #include <iostream>
 #include "Enemy.h"
+#include "Boss.h"
 #include "Util.h"
+#include "OBJModel.h"
 #include <random>
 #include <cmath>
 #include <algorithm>
@@ -60,6 +62,8 @@ double distanceCalculate(double x1, double y1, double x2, double y2)
 }
 
 void checkCollision(GameObject* obj1, GameObject* obj2) {
+	if (obj1->collider == nullptr || obj2->collider == nullptr) return;
+
 	if (obj1->collider->type == CIRCLE && obj2->collider->type == CIRCLE) {
 		double dist = distanceCalculate(obj1->x + obj1->cx, obj1->y + obj1->cy, obj2->x + obj2->cx, obj2->y + obj2->cy);
 		if (dist <= (obj1->collider->r + obj2->collider->r)) {
@@ -385,6 +389,9 @@ int main(int argc, char** argv) {
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
 	enemy = new Enemy();
+
+	Boss* boss = new Boss();
+	gameObjects.push_back(boss);
 	
 	gameObjects.push_back(player);
 

@@ -1,10 +1,23 @@
 #pragma once
+
 #include "Enemy.h"
+#include "OBJModel.h"
+
 class Boss :
-	public Enemy
+	public GameObject
 {
 public:
-	Boss();
+	Boss() : modelBody("models/head.obj") {
+		collider = nullptr;
+	}
+
 	~Boss();
+
+	void tick(float deltaTime);
+	void render();
+	void onCollide(GameObject* other);
+
+private:
+	OBJModel modelBody;
 };
 
