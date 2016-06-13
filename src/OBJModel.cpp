@@ -1,5 +1,4 @@
 #include "OBJModel.h"
-#include <GL/glew.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -8,23 +7,11 @@
 
 OBJModel::OBJModel(const std::string& filename) {
 	loadData(filename);
+	buildDisplayList();
 }
 
 void OBJModel::draw() const {
-	glBegin(GL_TRIANGLES);
-	glColor3f(1, 1, 1);
-
-	for (int i = 0; i < triangles.size(); i++) {
-		for (int j = 0; j < 3; j++) {
-			glm::ivec3 vertex = triangles[i][j];
-
-			if (vertex.y != -1) glTexCoord2f(texcoords[vertex.y].s, texcoords[vertex.y].t);
-			if (vertex.z != -1) glNormal3f(normals[vertex.z].x, normals[vertex.z].y, normals[vertex.z].z);
-			glVertex3f(positions[vertex.x].x, positions[vertex.x].y, positions[vertex.x].z);
-		}
-	}
-
-	glEnd();
+	glCallList(displayList);
 }
 
 void OBJModel::loadData(const std::string& filename) {
@@ -85,4 +72,27 @@ void OBJModel::loadData(const std::string& filename) {
 	std::cerr << "\t#texcoords = " << texcoords.size() << std::endl;
 	std::cerr << "\t#normals = " << normals.size() << std::endl;
 	std::cerr << "\t#triangles = " << triangles.size() << std::endl;
+}
+
+void OBJModel::buildDisplayList() {
+	displayList = glGenLists(1);
+
+	glNewList(displayList, GL_COMPILE);
+	
+	glBegin(GL_TRIANGLES);
+	glColor3f(1, 1, 1);
+
+	for (int i = 0; i < triangles.size(); i++) {
+		for (int j = 0; j < 3; j++) {
+			glm::ivec3 vertex = triangles[i][j];
+
+			if (vertex.y != -1) glTexCoord2f(texcoords[vertex.y].s, texcoords[vertex.y].t);
+			if (vertex.z != -1) glNormal3f(normals[vertex.z].x, normals[vertex.z].y, normals[vertex.z].z);
+			glVertex3f(positions[vertex.x].x, positions[vertex.x].y, positions[vertex.x].z);
+		}
+	}
+
+	glEnd();
+
+	glEndList();
 }

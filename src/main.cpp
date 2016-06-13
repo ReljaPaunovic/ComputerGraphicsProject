@@ -157,6 +157,8 @@ void initDisplay() {
 	// Set up clear values
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+	glEnable(GL_DEPTH_TEST);
+
 	// Create shader programs
 	setShader(0);
 

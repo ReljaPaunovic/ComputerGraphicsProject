@@ -4,6 +4,7 @@
 #include <array>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <GL/glew.h>
 
 // TODO: Use display list for drawing
 class OBJModel {
@@ -19,4 +20,7 @@ private:
 	std::vector<glm::vec2> texcoords;
 
 	void loadData(const std::string& filename);
+	void buildDisplayList();
+
+	GLint displayList;
 };
