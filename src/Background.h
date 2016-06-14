@@ -5,7 +5,7 @@ class Background
 {
 public:
 	Background():
-		plane("models/mountains.obj"){
+		plane("models/plane.obj"){
 
 		int textureWidth, textureHeight;
 		int textureComponents;

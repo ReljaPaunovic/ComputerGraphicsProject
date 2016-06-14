@@ -1,65 +1,92 @@
-
-in vec3 incoordinates;
 varying vec3 coordinates;
 varying vec3 normal;
+
 uniform float cameraX;
-float sCurve( float x )
-{
-	return x*x*(3.0-2.0*x);
-}
-float lerp1( float x, float a, float b )
-{
-	return a + x*( b - a );
-} 
 
-float simpleNoise1D(int x){
-    return fract(sin(dot(vec2(float( x), float(x)) ,vec2(12.9898,78.233))) * 43758.5453);
+vec3 mod289(vec3 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 
-float smoothNoise1D( float x )
-{
-float xs ;
-int xi ; 
-float l0, l1 ; 
-float xf; 
-
-	xi = int(x);
-	xf = x - float(xi);
-	xs = sCurve(xf);
-	l0 = simpleNoise1D( xi );
-	l1 = simpleNoise1D( xi+1 );
-return lerp1( xf, l0, xs ); 
+vec2 mod289(vec2 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 
-
-float f2Dnoise(float x,float y){
-	return (smoothNoise1D(x*5)+smoothNoise1D(y*5-213.2))*10;
+vec3 permute(vec3 x) {
+  return mod289(((x*34.0)+1.0)*x);
 }
 
-vec3 transformPos(vec3 pos) {
+float snoise(vec2 v)
+  {
+  const vec4 C = vec4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
+                      0.366025403784439,  // 0.5*(sqrt(3.0)-1.0)
+                     -0.577350269189626,  // -1.0 + 2.0 * C.x
+                      0.024390243902439); // 1.0 / 41.0
+// First corner
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+
+// Other corners
+  vec2 i1;
+  //i1.x = step( x0.y, x0.x ); // x0.x > x0.y ? 1.0 : 0.0
+  //i1.y = 1.0 - i1.x;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  // x0 = x0 - 0.0 + 0.0 * C.xx ;
+  // x1 = x0 - i1 + 1.0 * C.xx ;
+  // x2 = x0 - 1.0 + 2.0 * C.xx ;
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+
+// Permutations
+  i = mod289(i); // Avoid truncation effects in permutation
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+		+ i.x + vec3(0.0, i1.x, 1.0 ));
+
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+
+// Gradients: 41 points uniformly over a line, mapped onto a diamond.
+// The ring size 17*17 = 289 is close to a multiple of 41 (41*7 = 287)
+
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+
+// Normalise gradients implicitly by scaling m
+// Approximation of: m *= inversesqrt( a0*a0 + h*h );
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+
+// Compute final noise value at P
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+vec3 transformPos(vec2 noiseCoords) {
 	return vec3(
-		pos.x,
-		// sin((pos.x*pos.x*pos.x+pos.z*pos.z*pos.z) * 50.0) / 2 + 0.5,
-		f2Dnoise((pos.x + cameraX / 800.0 / (1.0 - pos.z)) / 4.0, pos.z / 4.0) / 30.0,
-		pos.z
+		noiseCoords.x,
+		snoise(noiseCoords) * 0.3,
+		noiseCoords.y
 	);
 }
 
-vec3 calculateNormal(vec3 p1) {
-	vec3 p2 = transformPos(p1 + vec3(0.01, 0.0, 0.0));
-	vec3 p3 = transformPos(p1 + vec3(0.0, 0.0, 0.01));
+vec3 calculateNormal(vec2 noiseCoords) {
+	vec3 p1 = transformPos(noiseCoords);
+	vec3 p2 = transformPos(noiseCoords + vec2(0.02, 0.0));
+	vec3 p3 = transformPos(noiseCoords + vec2(0.0, 0.02));
 
-	return normalize(cross(p2 - p1, p3 - p1));
+	return -normalize(cross(p2 - p1, p3 - p1));
 }
 
 void main() {
-	// vec3 pos = transformPos(gl_Vertex.xyz);
-    coordinates = gl_Vertex.xyz;
+	vec2 noiseCoords = vec2(gl_Vertex.x + cameraX / 800.0, gl_Vertex.z);
+    coordinates = transformPos(noiseCoords);
+    coordinates.x -= cameraX / 800.0;
 
- //    normal = calculateNormal(gl_Vertex.xyz);
-
- //    gl_Position = gl_ModelViewProjectionMatrix * vec4(pos, 1.0);
-	normal = gl_Normal;
-	gl_Position = ftransform();
-	gl_TexCoord[0] = gl_MultiTexCoord0;
+	normal = calculateNormal(noiseCoords);
+	
+	gl_Position = gl_ModelViewProjectionMatrix * vec4(coordinates, 1.0);
+	gl_TexCoord[0] = vec4(gl_MultiTexCoord0.x + cameraX / 1600.0, gl_MultiTexCoord0.yzw);
 }
