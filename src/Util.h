@@ -30,7 +30,7 @@ namespace Util {
 		return fileData.data();
 	}
 
-	inline GLuint loadTexture(const std::string& filename) {
+	inline GLuint loadTexture(const std::string& filename, bool pixelated = false) {
 		GLuint texture;
 
 		int textureWidth, textureHeight;
@@ -42,8 +42,8 @@ namespace Util {
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -51,5 +51,21 @@ namespace Util {
 		stbi_image_free(pixels);
 
 		return texture;
+	}
+
+	inline void drawTexturedQuad(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& uv1, const glm::vec2& uv2) {
+		glBegin(GL_QUADS);
+			glTexCoord2f(uv1.x, uv1.y);
+			glVertex2f(p1.x, p1.y);
+
+			glTexCoord2f(uv2.x, uv1.y);
+			glVertex2f(p2.x, p1.y);
+
+			glTexCoord2f(uv2.x, uv2.y);
+			glVertex2f(p2.x, p2.y);
+
+			glTexCoord2f(uv1.x, uv2.y);
+			glVertex2f(p1.x, p2.y);
+		glEnd();
 	}
 }

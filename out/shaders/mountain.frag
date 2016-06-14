@@ -12,7 +12,7 @@ float simpleNoise1D(float x){
 void main() {
     // gl_FragColor = vec4(height, 0.0, 0.0, 1.0);
     vec3 lightDir = normalize(vec3(1, 1, 1));
-    float diffuse = dot(normal, lightDir);
+    float diffuse = dot(normal, lightDir) * (1.0 - gl_FragCoord.z + 0.5);
 
     float relHeight = (coordinates.y + 1.1) / 1.2;
     relHeight = pow(relHeight, 6.0);

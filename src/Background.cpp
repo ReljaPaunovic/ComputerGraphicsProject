@@ -9,7 +9,7 @@ void Background::render(float viewx){
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(viewx + 400, 300, -500);
+	glTranslatef(viewx + 400, 300, -250);
 	glScalef(400, -1000, 500);
 	GLfloat mat_specular[] = {100.0, 100.0, 100.0, 1.0};
 	GLfloat mat_shininess[] = {50.0};

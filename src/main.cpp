@@ -304,8 +304,11 @@ void drawGameObjects(float deltaTime) {
 }
 
 void drawUI(float deltaTime) {
+	static GLuint healthBarTexture = Util::loadTexture("textures/healthbar.png", true);
+	
 	// Draw over everything
 	glClear(GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
 
 	// Set up projection to map directly to pixel coordinates
 	glMatrixMode(GL_PROJECTION);
@@ -315,24 +318,24 @@ void drawUI(float deltaTime) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(30, 30, 0);
-	glScalef(2, 30, 0);
+	glScalef(2.5f, 2.5f, 1.0f);
 
 	// Draw player health bar
-	glBegin(GL_LINE_STRIP);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex2f(0, 0);
-		glVertex2f(100, 0);
-		glVertex2f(100, 1);
-		glVertex2f(0, 1);
-		glVertex2f(0, 0);
-	glEnd();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, healthBarTexture);
 
-	glBegin(GL_QUADS);
-		glVertex2f(0, 0);
-		glVertex2f(std::max(player->getHealth(),0.0f), 0);
-		glVertex2f(std::max(player->getHealth(),0.0f), 1);
-		glVertex2f(0, 1);
-	glEnd();
+	float healthWidth = 100.0f;
+
+	Util::drawTexturedQuad(glm::vec2(0, 0), glm::vec2(7, 16), glm::vec2(0, 0), glm::vec2(7.0f/28.0f, 16.0f/16.0f));
+	Util::drawTexturedQuad(glm::vec2(healthWidth + 7, 0), glm::vec2(healthWidth + 14, 16), glm::vec2(13.0f/28.0f, 0), glm::vec2(20.0f / 28.0f, 16.0f / 16.0f));
+
+	float healthFraction = std::min(1.0f, std::max(player->getHealth() / 100.0f, 0.0f));
+
+	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth + 7, 16), glm::vec2(20.0f / 28.0f, 0), glm::vec2(21.0f / 28.0f, 16.0f / 16.0f));
+	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth * healthFraction + 7, 16), glm::vec2(7.0f / 28.0f, 0), glm::vec2(13.0f / 28.0f, 16.0f / 16.0f));
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void setShader(int i) {
