@@ -50,5 +50,6 @@ private:
 	float lowerBoundary = -800;
 
 	GLuint texture;
+	GLuint shader;
 };
 

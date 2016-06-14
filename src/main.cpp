@@ -116,44 +116,6 @@ void checkCollisions() {
 	std::cerr << "OpenGL: " << message << std::endl;
 }*/
 
-GLuint createShaderProgram(const std::string& vertexShaderFile, const std::string& fragShaderFile) {
-	std::string vertexShaderSrc = Util::readFile(vertexShaderFile);
-	std::string fragShaderSrc = Util::readFile(fragShaderFile);
-	const char* vertexShaderSrcPtr = vertexShaderSrc.c_str();
-	const char* fragShaderSrcPtr = fragShaderSrc.c_str();
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSrcPtr, nullptr);
-	glCompileShader(vertexShader);
-
-	char buffer[512];
-	glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
-
-	std::cerr << "vertex shader (" << vertexShaderFile << "):" << std::endl;
-	std::cerr << buffer << std::endl;
-
-	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShader, 1, &fragShaderSrcPtr, nullptr);
-	glCompileShader(fragShader);
-
-	glGetShaderInfoLog(fragShader, 512, NULL, buffer);
-
-	std::cerr << "fragment shader (" << fragShaderFile << "):" << std::endl;
-	std::cerr << buffer << std::endl;
-
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, fragShader);
-	glAttachShader(shaderProgram, vertexShader);
-	glLinkProgram(shaderProgram);
-
-	glGetProgramInfoLog(shaderProgram, 512, nullptr, buffer);
-
-	std::cerr << "link log:" << std::endl;
-	std::cerr << buffer << std::endl;
-
-	return shaderProgram;
-}
-
 void initDisplay() {
 //	glEnable(GL_DEBUG_OUTPUT);
 //	glDebugMessageCallback(debugCallback, nullptr);
@@ -170,7 +132,7 @@ void initDisplay() {
 
 	setShader(0);
 
-	mountainShader = createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
+	mountainShader = Util::createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
 }
 
 int minx=0;
@@ -357,17 +319,17 @@ void drawUI(float deltaTime) {
 
 void setShader(int i) {
 	if (i == 0) {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/postprocessing.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/postprocessing.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 	} else if (i == 1) {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/oilpainting.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/oilpainting.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 	} else if (i == 2) {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/headvission.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/headvission.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 	} else {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/HandDrawn.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/HandDrawn.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 
 	}
 
@@ -411,20 +373,20 @@ int main(int argc, char** argv) {
 	glutKeyboardUpFunc(keyboardUp);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 
+	// Set up rendering
+	glewInit();
+	initDisplay();
+
 	// Initialize game world
 	player = new Player();
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
 	enemy = new Enemy();
 
-	boss = new Boss();
-	gameObjects.push_back(boss);
+	//boss = new Boss();
+	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
-
-	// Set up rendering
-	glewInit();
-	initDisplay();
 	gameObjects.push_back(enemy);
 
 	// Start game

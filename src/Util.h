@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <iostream>
 
 namespace Util {
 	const float pi = 3.1415926535f;
@@ -67,5 +68,43 @@ namespace Util {
 			glTexCoord2f(uv1.x, uv2.y);
 			glVertex2f(p1.x, p2.y);
 		glEnd();
+	}
+
+	inline GLuint createShaderProgram(const std::string& vertexShaderFile, const std::string& fragShaderFile) {
+		std::string vertexShaderSrc = Util::readFile(vertexShaderFile);
+		std::string fragShaderSrc = Util::readFile(fragShaderFile);
+		const char* vertexShaderSrcPtr = vertexShaderSrc.c_str();
+		const char* fragShaderSrcPtr = fragShaderSrc.c_str();
+
+		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertexShader, 1, &vertexShaderSrcPtr, nullptr);
+		glCompileShader(vertexShader);
+
+		char buffer[512];
+		glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
+
+		std::cerr << "vertex shader (" << vertexShaderFile << "):" << std::endl;
+		std::cerr << buffer << std::endl;
+
+		GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragShader, 1, &fragShaderSrcPtr, nullptr);
+		glCompileShader(fragShader);
+
+		glGetShaderInfoLog(fragShader, 512, NULL, buffer);
+
+		std::cerr << "fragment shader (" << fragShaderFile << "):" << std::endl;
+		std::cerr << buffer << std::endl;
+
+		GLuint shaderProgram = glCreateProgram();
+		glAttachShader(shaderProgram, fragShader);
+		glAttachShader(shaderProgram, vertexShader);
+		glLinkProgram(shaderProgram);
+
+		glGetProgramInfoLog(shaderProgram, 512, nullptr, buffer);
+
+		std::cerr << "link log:" << std::endl;
+		std::cerr << buffer << std::endl;
+
+		return shaderProgram;
 	}
 }

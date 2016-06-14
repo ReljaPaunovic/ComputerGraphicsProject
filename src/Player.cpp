@@ -6,6 +6,7 @@
 #include <stb_image.h>
 #include "main.h"
 #include <algorithm>
+#include "OBJModel.h"
 #define PI 3.14
 
 
@@ -14,12 +15,14 @@ Player::Player()
 {
 	x = 100;
 	y = 400;
-	cx = 48;
-	cy = 48;
+	cx = 15;
+	cy = 15;
 	collider = new Collider(35);
 	velocity = 50;
 
-	texture = Util::loadTexture("textures/spaceship.png");
+	texture = Util::loadTexture("textures/metal_plate.jpg");
+
+	shader = Util::createShaderProgram("shaders/meshlighting.vert", "shaders/meshlighting.frag");
 }
 
 
@@ -75,11 +78,12 @@ void Player::tick(float deltaTime) {
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
 
+	// Should fire from two guns, but can't be bothered to set up the matrix for that right now
 	timeUntilNextFire -= deltaTime;
 	if(firing && timeUntilNextFire <= 0.0f){
 		timeUntilNextFire = firingDelay;
-		float spawnX = x + cos(Util::deg2rad(angle)) * 48;
-		float spawnY = y + sin(Util::deg2rad(angle)) * 48;
+		float spawnX = x + cos(Util::deg2rad(angle)) * 25;
+		float spawnY = y + sin(Util::deg2rad(angle)) * 25;
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
 	}
 }
@@ -92,27 +96,19 @@ void Player::render() {
 	setupTransformation();
 
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-	glBegin(GL_QUADS);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		
-		glTexCoord2f(0, 0);
-		glVertex3f(0, 0, 2);
+	GLint originalProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+	glUseProgram(shader);
 
-		glTexCoord2f(1, 0);
-		glVertex3f(96, 0, 2);
-
-		glTexCoord2f(1, 1);
-		glVertex3f(96, 96, 2);
-
-		glTexCoord2f(0, 1);
-		glVertex3f(0, 96, 2);
-	glEnd();
+	static OBJModel lol("models/tiefighter.obj");
+	lol.draw();
 
 	glDisable(GL_TEXTURE_2D);
+
+	glUseProgram(originalProgram);
 
 	resetTransformation();
 }
