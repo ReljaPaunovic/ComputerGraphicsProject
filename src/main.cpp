@@ -37,6 +37,7 @@ Player* player;
 Camera* camera;
 Enemy* enemy;
 Background* background;
+GameObject* boss;
 
 Stopwatch frameTimer;
 Stopwatch gameTimer;
@@ -210,7 +211,7 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-	enemySpawner(deltaTime);
+	//enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime);
 
@@ -392,7 +393,7 @@ int main(int argc, char** argv) {
 	background = new Background();
 	enemy = new Enemy();
 
-	Boss* boss = new Boss();
+	boss = new Boss();
 	gameObjects.push_back(boss);
 	
 	gameObjects.push_back(player);

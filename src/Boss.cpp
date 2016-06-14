@@ -1,17 +1,33 @@
 #include "Boss.h"
+#include <GL/glut.h>
 #include <iostream>
+#include "main.h"
+#include <cmath>
+#include "BossSegment.h"
 
 Boss::~Boss()
 {
 }
 
 void Boss::loadTextures() {
+	x = 1000;
+	y = 100;
+	speed = 0.5;
 	eyeTexture = loadTexture("textures/hal.png");
 	rivetTexture = loadTexture("textures/metal_rivets.jpg");
 }
 
-void Boss::tick(float deltaTime) {
 
+void Boss::tick(float deltaTime) {
+	xDirection = player->x - x;
+	yDirection = player->y - y;
+
+	float normalizationFactor = sqrt(xDirection*xDirection + yDirection*yDirection);
+	xDirection /= normalizationFactor;
+	yDirection /= normalizationFactor;
+
+	x += xDirection * speed;
+	y += yDirection * speed;
 }
 
 void Boss::render() {
@@ -36,9 +52,10 @@ void Boss::render() {
 	glBindTexture(GL_TEXTURE_2D, rivetTexture);
 
 	modelHead.draw();
+	
 
 	glBindTexture(GL_TEXTURE_2D, eyeTexture);
-
+	
 	glTranslatef(0, 0, 2);
 
 	modelEye.draw();
@@ -48,8 +65,11 @@ void Boss::render() {
 	modelEye.draw();
 
 	glDisable(GL_TEXTURE_2D);
+	
 
 	glDisable(GL_LIGHTING);
+
+	resetTransformation();
 }
 
 void Boss::onCollide(GameObject* other) {
@@ -71,6 +91,7 @@ GLuint Boss::loadTexture(const std::string& filename) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
