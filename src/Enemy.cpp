@@ -8,6 +8,7 @@
 #include "main.h"
 #include <algorithm>
 #include "AnimateObject.h"
+#include "Projectile.h"
 
 
 Enemy::Enemy()
@@ -18,6 +19,10 @@ Enemy::Enemy()
 	cy = 48;
 	angle = 0;
 	collider = new Collider(90);
+	
+	// this is to lower the chance bombs will overlap
+	z = (float) (10 + rand() % 100);
+	
 
 	int textureWidth, textureHeight;
 	int textureComponents;
@@ -52,21 +57,20 @@ void Enemy::render() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, texture);
-
 	glBegin(GL_QUADS);
 		glColor3f(1.0f, 1.0f, 1.0f);
 		
 		glTexCoord2f(0, 0);
-		glVertex3f(0, 0, 1);
+		glVertex3f(0, 0, z);
 
 		glTexCoord2f(1, 0);
-		glVertex3f(96, 0, 1);
+		glVertex3f(96, 0, z);
 
 		glTexCoord2f(1, 1);
-		glVertex3f(96, 96, 1);
+		glVertex3f(96, 96, z);
 
 		glTexCoord2f(0, 1);
-		glVertex3f(0, 96, 1);
+		glVertex3f(0, 96, z);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
@@ -88,11 +92,19 @@ void Enemy::onCollide(GameObject* other) {
 		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
-	else
+	//Check if it is other enemy
+	if (dynamic_cast<Enemy*>(other) != NULL) {
+		//this->animateDeath();
+		//gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+
+	}
+	if (dynamic_cast<Projectile*>(other) != NULL) {
+		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+	}
 }
-void Enemy::animateDeath()
-{
-	AnimateObject * anObj = new AnimateObject(this->x, this->y);
+
+void Enemy::animateDeath(){
+	AnimateObject * anObj = new AnimateObject(this->x, this->y, this->z);
 	gameObjects.push_back(anObj);
 }

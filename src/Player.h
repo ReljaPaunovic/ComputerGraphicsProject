@@ -43,7 +43,7 @@ private:
 	float rotationRight = 0.0f;
 
 	bool firing = false;
-	float firingDelay = 1.0f / 10.0f;
+	float firingDelay = 1.0f / 2.0f; 
 	float timeUntilNextFire = 0.0f;
 
 	float upperBoundary = 200;

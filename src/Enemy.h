@@ -20,6 +20,7 @@ public:
 	void animateDeath();
 
 private:
+	float z;
 	float health = 10;
 	GLuint texture;
 };

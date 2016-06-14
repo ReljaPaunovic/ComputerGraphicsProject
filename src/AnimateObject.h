@@ -5,7 +5,7 @@ class AnimateObject:
 	public GameObject
 {
 public:
-	AnimateObject(float x, float y);
+	AnimateObject(float x, float y, float z);
 	~AnimateObject();
 
 	void tick(float deltaTime);
@@ -17,6 +17,8 @@ public:
 
 	float StepDelay = 1.0f / 10.0f;
 	float timeUntilNextStep = 0.0f;
+
+	float z;
 
 	GLuint texture;
 };

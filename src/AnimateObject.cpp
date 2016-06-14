@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include <algorithm>
 
-AnimateObject::AnimateObject(float x, float y)
+AnimateObject::AnimateObject(float x, float y, float z)
 {
 	numSteps = 12;
 	currentStep = 0;
@@ -12,6 +12,7 @@ AnimateObject::AnimateObject(float x, float y)
 	collider = new Collider(0);
 	this->x = x;
 	this->y = y;
+	this->z = z;
 
 	int textureWidth, textureHeight;
 	int textureComponents;
@@ -62,16 +63,16 @@ void AnimateObject::render()
 		glColor3f(1.0f, 1.0f, 1.0f);
 
 		glTexCoord2f((float)currentStep/numSteps , 0);
-		glVertex3f(0, 0, 50);
+		glVertex3f(0, 0, z);
 
 		glTexCoord2f((1 + (float)currentStep) / numSteps, 0);
-		glVertex3f(96, 0, 50);
+		glVertex3f(96, 0, z);
 
 		glTexCoord2f((1 + (float)currentStep) / numSteps, 1);
-		glVertex3f(96, 96, 50);
+		glVertex3f(96, 96, z);
 
 		glTexCoord2f((float)currentStep / numSteps, 1);
-		glVertex3f(0, 96, 50);
+		glVertex3f(0, 96, z);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);

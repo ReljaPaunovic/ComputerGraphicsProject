@@ -17,6 +17,7 @@ Player::Player()
 	cx = 48;
 	cy = 48;
 	collider = new Collider(35);
+	velocity = 600;
 
 	// Load and create texture
 	int textureWidth, textureHeight;
@@ -47,6 +48,7 @@ float Player::getHealth() const {
 }
 
 void Player::handleKeyboard(unsigned char key, bool down) {
+	// Do we need w and s?
 	if (key == 'a') {
 		rotationLeft = down ? 1.0f : 0.0f;
 	} else if (key == 'd') {
@@ -85,18 +87,20 @@ void Player::tick(float deltaTime) {
 			angle -= (1 + y / upperBoundary);
 	}
 	// Destroy if lower than lowerBoundary
-	printf("-y = %f \n", -y);
 	if (-y < lowerBoundary) {
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
+	printf("timeUntilNextFire = %f \n", timeUntilNextFire);
 	timeUntilNextFire -= deltaTime;
+	
 	if(firing && timeUntilNextFire <= 0.0f){
 		timeUntilNextFire = firingDelay;
+
+		//printf("timeUntilNextFire = %f \n", timeUntilNextFire);
 		float spawnX = x + cos(Util::deg2rad(angle)) * 48;
 		float spawnY = y + sin(Util::deg2rad(angle)) * 48;
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
 	}
-
 }
 
 void Player::onCollide(GameObject* other) {
@@ -133,17 +137,6 @@ void Player::render() {
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-
-	// For testing purposes, collision circles
-	/*glPushMatrix();
-	glTranslatef((float)cx, (float)cy, 0.0f);
-	glBegin(GL_QUADS);
-		glVertex2f(-collider->width / 2, -collider->height / 2);
-		glVertex2f(collider->width / 2, -collider->height / 2);
-		glVertex2f(collider->width / 2, collider->height / 2);
-		glVertex2f(-collider->width / 2, collider->height / 2);
-	glEnd();
-	glPopMatrix();*/
 
 	// For testing purposes, collision circles
 	glTranslatef((float)cx, (float)cy, 0.0f);

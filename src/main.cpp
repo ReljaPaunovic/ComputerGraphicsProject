@@ -168,7 +168,7 @@ void initDisplay() {
 int minx=0;
 int maxx=0;
 const double spawnFactor = 1000;
-const double SpawnScaler = 2;
+const double SpawnScaler = 1;
 const int spawnRangeMin = -400;
 const int spawnRangeMax = 1200;
 std::default_random_engine generator;
@@ -176,12 +176,13 @@ std::exponential_distribution<double> distribution(SpawnScaler);
 
 void enemySpawner(float deltatime){
 
-	int x=(int) camera->getX();
-	if(x>maxx||x<minx){
+	int x = (int)camera->getX();
+	if(x > maxx || x < minx ){
 		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
 			enemy = new Enemy();
 			enemy->y=(float) ((rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin);
 			gameObjects.push_back(enemy);
+
 			//if( (int)abs(player->angle - 90) % 180 > 90 ){
 			if(abs((int) (player->angle-90))%180>90){
 				enemy->x=x-10.0f;
@@ -189,7 +190,6 @@ void enemySpawner(float deltatime){
 			}else{
 				enemy->x=x+WIDTH+10.0f;
 			}
-			
 		}
 	}
 

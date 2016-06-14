@@ -15,5 +15,6 @@ public:
 
 private:
 	float velocity;
+	float size = 2;
 };
 
