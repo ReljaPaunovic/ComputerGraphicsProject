@@ -17,8 +17,7 @@ Player::Player()
 	cx = 48;
 	cy = 48;
 	collider = new Collider(35);
-	velocity = 600;
-	//velocity = 0;
+	velocity = 0;
 
 	// Load and create texture
 	int textureWidth, textureHeight;

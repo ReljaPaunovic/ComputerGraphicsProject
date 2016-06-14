@@ -2,6 +2,7 @@
 #include <iostream>
 #include <math.h>
 #include <GL/glew.h>
+#include <time.h>
 
 float sCurve( float x )
 {
@@ -89,11 +90,13 @@ void drawGrid(){
 }
 
 void Background::render(float viewx){
-
+	glDisable(GL_CULL_FACE);
 
 	glMatrixMode(GL_MODELVIEW);
-	glScalef(3000, 3000, 3000);
-	glRotatef(0,0,0,1);
+	glLoadIdentity();
+	glTranslatef(viewx + 400, 300, 0);
+	glScalef(400, 300, 1);
+	glRotatef(90, 1, 0, 0);
 	GLfloat mat_specular[] = {100.0, 100.0, 100.0, 1.0};
 	GLfloat mat_shininess[] = {50.0};
 	GLfloat light_position[] = {0, 0 - 0, -50.0, 0.0};
@@ -103,24 +106,7 @@ void Background::render(float viewx){
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-	//glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
 	plane.draw();
-
-	glDisable(GL_LIGHTING);
-
-/*
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	GLint shader;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &shader);
-	GLint uniLayer = glGetUniformLocation(shader, "layer");
-	
-	glUniform1i(uniLayer, 0);
-	layer1((int) viewx,800);
-
-*/
 }
 
 

@@ -165,8 +165,6 @@ void initDisplay() {
 	setShader(0);
 
 	mountainShader = createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
-
-	setShader(1);
 }
 
 int minx=0;
@@ -289,7 +287,8 @@ void drawGameObjects(float deltaTime) {
 	camera->setProjection();
 
 	// Draw background
-//	glUseProgram(mountainShader);
+	glUseProgram(mountainShader);
+	glUniform1f(glGetUniformLocation(mountainShader, "cameraX"), camera->getX());
 	background->render(camera->getX());
 	glUseProgram(0);
 
