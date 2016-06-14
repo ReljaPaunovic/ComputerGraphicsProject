@@ -67,7 +67,7 @@ float snoise(vec2 v)
 vec3 transformPos(vec2 noiseCoords) {
 	return vec3(
 		noiseCoords.x,
-		snoise(noiseCoords) * 0.3,
+		snoise(noiseCoords) * 0.3 + (1.0 - noiseCoords.y) / 3.0 - 0.7,
 		noiseCoords.y
 	);
 }
@@ -86,7 +86,7 @@ void main() {
     coordinates.x -= cameraX / 800.0;
 
 	normal = calculateNormal(noiseCoords);
-	
+
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(coordinates, 1.0);
 	gl_TexCoord[0] = vec4(gl_MultiTexCoord0.x + cameraX / 1600.0, gl_MultiTexCoord0.yzw);
 }

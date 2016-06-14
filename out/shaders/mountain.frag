@@ -14,7 +14,7 @@ void main() {
     vec3 lightDir = normalize(vec3(1, 1, 1));
     float diffuse = dot(normal, lightDir);
 
-    float relHeight = (coordinates.y + 0.4) / 0.7 * 1.2;
+    float relHeight = (coordinates.y + 1.1) / 1.2;
     relHeight = pow(relHeight, 6.0);
     relHeight = min(relHeight, 1);
 
