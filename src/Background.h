@@ -1,11 +1,19 @@
 #pragma once
 #include "GameObject.h"
+#include "OBJModel.h"
 class Background 	
 {
 public:
-	Background();
+	Background():
+		plane("models/plane.obj"){
+		}
+
 	~Background();
-	void layer1(int ,float ,float ,float ,float, float,float);
+
+
+	void layer1(int ,float );
 	void render(float);
+private:
+		OBJModel plane;
 };
 

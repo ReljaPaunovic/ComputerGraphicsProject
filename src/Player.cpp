@@ -91,6 +91,7 @@ void Player::tick(float deltaTime) {
 	if (-y < lowerBoundary) {
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
+
 	timeUntilNextFire -= deltaTime;
 	if(firing && timeUntilNextFire <= 0.0f){
 		timeUntilNextFire = firingDelay;

@@ -161,9 +161,12 @@ void initDisplay() {
 	glEnable(GL_DEPTH_TEST);
 
 	// Create shader programs
+
 	setShader(0);
 
 	mountainShader = createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
+
+	setShader(1);
 }
 
 int minx=0;
@@ -286,7 +289,7 @@ void drawGameObjects(float deltaTime) {
 	camera->setProjection();
 
 	// Draw background
-	glUseProgram(mountainShader);
+//	glUseProgram(mountainShader);
 	background->render(camera->getX());
 	glUseProgram(0);
 
@@ -395,7 +398,7 @@ int main(int argc, char** argv) {
 
 	boss = new Boss();
 	gameObjects.push_back(boss);
-	
+	background = new Background();
 	gameObjects.push_back(player);
 
 	// Set up rendering
