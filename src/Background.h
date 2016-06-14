@@ -16,15 +16,17 @@ public:
 
 	~Background();
 
-
-	void layer1(int ,float );
 	void render(float);
 private:
-		OBJModel plane;
+	OBJModel plane;
 
-		GLuint textureSky;
-		GLuint textureRock;
-		GLuint textureSnow;
-		GLuint textureRockGrass;
+	GLuint textureSky;
+	GLuint textureRock;
+	GLuint textureSnow;
+	GLuint textureRockGrass;
+
+	void renderMountains(float);
+	void renderSky();
+	void renderWater();
 };
 

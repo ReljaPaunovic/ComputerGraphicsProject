@@ -13,11 +13,11 @@
 Player::Player()
 {
 	x = 100;
-	y = 300;
+	y = 400;
 	cx = 48;
 	cy = 48;
 	collider = new Collider(35);
-	velocity = 0;
+	velocity = 400;
 
 	texture = Util::loadTexture("textures/spaceship.png");
 }

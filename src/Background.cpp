@@ -5,11 +5,14 @@
 #include <time.h>
 
 void Background::render(float viewx){
-	static time_t start = time(nullptr);
+	renderMountains(viewx);
+	renderSky();
+}
 
+void Background::renderMountains(float viewx) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(viewx + 400, 300, -250);
+	glTranslatef(viewx + 400, 300, -300);
 	glScalef(400, -1000, 500);
 	GLfloat mat_specular[] = {100.0, 100.0, 100.0, 1.0};
 	GLfloat mat_shininess[] = {50.0};
@@ -29,7 +32,9 @@ void Background::render(float viewx){
 	glBindTexture(GL_TEXTURE_2D, textureRockGrass);
 
 	plane.draw();
+}
 
+void Background::renderSky() {
 	glUseProgram(0);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -44,22 +49,26 @@ void Background::render(float viewx){
 	glOrtho(0, 800, 600, 0, -1000, 1000);
 
 	glBegin(GL_QUADS);
-		glTexCoord2f(0, 0);
-		glVertex3f(0, 0, -900);
+	glTexCoord2f(0, 0);
+	glVertex3f(0, 0, -900);
 
-		glTexCoord2f(1, 0);
-		glVertex3f(800, 0, -900);
+	glTexCoord2f(1, 0);
+	glVertex3f(800, 0, -900);
 
-		glTexCoord2f(1, 1);
-		glVertex3f(800, 600, -900);
+	glTexCoord2f(1, 1);
+	glVertex3f(800, 600, -900);
 
-		glTexCoord2f(0, 1);
-		glVertex3f(0, 600, -900);
+	glTexCoord2f(0, 1);
+	glVertex3f(0, 600, -900);
 	glEnd();
 
 	glPopMatrix();
 
 	glDisable(GL_TEXTURE_2D);
+}
+
+void Background::renderWater() {
+	// TODO
 }
 
 Background::~Background()

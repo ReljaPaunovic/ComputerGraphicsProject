@@ -220,6 +220,9 @@ void display() {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1].fbo);
 	glUseProgram(ppShaders[0]);
 
+	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraX"), camera->getX());
+	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraY"), camera->getY());
+
 	if (playerPositionUniformLoc[0] != -1) {
 		glUniform2f(playerPositionUniformLoc[0], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
 	}
@@ -232,6 +235,9 @@ void display() {
 	// Render scene with second post-processing pass
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(ppShaders[1]);
+
+	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraX"), camera->getX());
+	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraY"), camera->getY());
 
 	if (playerPositionUniformLoc[1] != -1) {
 		glUniform2f(playerPositionUniformLoc[1], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
