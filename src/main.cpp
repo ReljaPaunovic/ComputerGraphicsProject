@@ -289,6 +289,8 @@ void drawGameObjects(float deltaTime) {
 	// Draw background
 	glUseProgram(mountainShader);
 	glUniform1f(glGetUniformLocation(mountainShader, "cameraX"), camera->getX());
+	glUniform1i(glGetUniformLocation(mountainShader, "texSnow"), 1);
+	glUniform1i(glGetUniformLocation(mountainShader, "texRockGrass"), 2);
 	background->render(camera->getX());
 	glUseProgram(0);
 

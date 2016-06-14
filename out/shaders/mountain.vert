@@ -1,7 +1,7 @@
 
 in vec3 incoordinates;
-out vec3 coordinates;
-out vec3 normal;
+varying vec3 coordinates;
+varying vec3 normal;
 uniform float cameraX;
 float sCurve( float x )
 {
@@ -54,10 +54,12 @@ vec3 calculateNormal(vec3 p1) {
 
 void main() {
 	// vec3 pos = transformPos(gl_Vertex.xyz);
- //    coordinates = pos;
+    coordinates = gl_Vertex.xyz;
 
  //    normal = calculateNormal(gl_Vertex.xyz);
 
  //    gl_Position = gl_ModelViewProjectionMatrix * vec4(pos, 1.0);
- gl_Position = ftransform();
+	normal = gl_Normal;
+	gl_Position = ftransform();
+	gl_TexCoord[0] = gl_MultiTexCoord0;
 }
