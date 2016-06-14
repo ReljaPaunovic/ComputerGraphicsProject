@@ -17,6 +17,7 @@ public:
 
 	float StepDelay = 1.0f / 10.0f;
 	float timeUntilNextStep = 0.0f;
+	float timeSoFar = 0.0f;
 
 	float z;
 

@@ -32,6 +32,12 @@
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
+float explosionRange = 0.0f;
+glm::vec2 explosionPos;
+
+float shockwaveRange = 0.0f;
+float shockwaveDistance = 0.0f;
+
 std::vector<GameObject*> gameObjects;
 Player* player;
 Camera* camera;
@@ -239,6 +245,11 @@ void display() {
 	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraX"), camera->getX());
 	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraY"), camera->getY());
 
+	glUniform1f(glGetUniformLocation(ppShaders[1], "explosionRange"), explosionRange);
+	glUniform2f(glGetUniformLocation(ppShaders[1], "explosionPos"), explosionPos.x, explosionPos.y);
+	glUniform1f(glGetUniformLocation(ppShaders[1], "shockwaveRange"), shockwaveRange);
+	glUniform1f(glGetUniformLocation(ppShaders[1], "shockwaveDistance"), shockwaveDistance);
+
 	if (playerPositionUniformLoc[1] != -1) {
 		glUniform2f(playerPositionUniformLoc[1], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
 	}
@@ -406,8 +417,8 @@ int main(int argc, char** argv) {
 	background = new Background();
 	enemy = new Enemy();
 
-	boss = new Boss();
-	gameObjects.push_back(boss);
+	//boss = new Boss();
+	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
 

@@ -12,3 +12,9 @@ void setShader(int i);
 extern std::vector<GameObject*> gameObjects;
 extern GameObject* boss;
 extern Player* player;
+
+extern float explosionRange;
+extern glm::vec2 explosionPos;
+
+extern float shockwaveRange;
+extern float shockwaveDistance;
