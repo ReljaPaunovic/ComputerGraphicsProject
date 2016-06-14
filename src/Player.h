@@ -3,6 +3,9 @@
 #include "GameObject.h"
 #include <GL/freeglut.h>
 
+#define SFML_STATIC
+#include <SFML/Audio.hpp>
+
 class Player:
 	public GameObject
 {
@@ -54,5 +57,8 @@ private:
 
 	GLuint texture;
 	GLuint shader;
+
+	sf::SoundBuffer shootSoundBuffer;
+	sf::Sound shootSound;
 };
 

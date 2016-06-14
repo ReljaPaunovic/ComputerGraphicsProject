@@ -1,6 +1,9 @@
 #pragma once
 #include "GameObject.h"
 
+#define SFML_STATIC
+#include <SFML/Audio.hpp>
+
 class AnimateObject:
 	public GameObject
 {
@@ -12,6 +15,7 @@ public:
 	void render();
 	void onCollide(GameObject* other);
 
+private:
 	int numSteps;
 	int currentStep;
 
@@ -20,7 +24,9 @@ public:
 	float timeSoFar = 0.0f;
 
 	float z;
-
 	GLuint texture;
+
+	sf::SoundBuffer explosionSoundBuffer;
+	sf::Sound explosionSound;
 };
 

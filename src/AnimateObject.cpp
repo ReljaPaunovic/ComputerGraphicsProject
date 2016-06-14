@@ -16,6 +16,12 @@ AnimateObject::AnimateObject(float x, float y, float z)
 	this->z = z;
 
 	texture = Util::loadTexture("textures/Explosion.png");
+
+	explosionSoundBuffer.loadFromFile("sounds/explosion.wav");
+	explosionSound.setBuffer(explosionSoundBuffer);
+	explosionSound.setVolume(100);
+
+	explosionSound.play();
 }
 
 

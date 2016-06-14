@@ -7,9 +7,6 @@
 #include "main.h"
 #include <algorithm>
 #include "OBJModel.h"
-#define PI 3.14
-
-
 
 Player::Player()
 {
@@ -23,6 +20,10 @@ Player::Player()
 	texture = Util::loadTexture("textures/metal_plate.jpg");
 
 	shader = Util::createShaderProgram("shaders/meshlighting.vert", "shaders/meshlighting.frag");
+
+	shootSoundBuffer.loadFromFile("sounds/laser_shot.wav");
+	shootSound.setBuffer(shootSoundBuffer);
+	shootSound.setVolume(50);
 }
 
 
@@ -93,6 +94,8 @@ void Player::tick(float deltaTime) {
 		float spawnX = x + cos(Util::deg2rad(angle)) * 25;
 		float spawnY = y + sin(Util::deg2rad(angle)) * 25;
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
+
+		shootSound.play();
 	}
 }
 
