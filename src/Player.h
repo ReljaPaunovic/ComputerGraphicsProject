@@ -47,6 +47,7 @@ private:
 	float timeUntilNextFire = 0.0f;
 
 	float upperBoundary = 200;
+	float lowerBoundary = -800;
 
 	GLuint texture;
 };

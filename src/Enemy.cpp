@@ -7,6 +7,7 @@
 #include <typeinfo>
 #include "main.h"
 #include <algorithm>
+#include "AnimateObject.h"
 
 
 Enemy::Enemy()
@@ -84,9 +85,14 @@ void Enemy::onCollide(GameObject* other) {
 	//Check if it is a PLAYER
 	if (dynamic_cast<Player*>(other) != NULL) {
 		((Player*)other)->setHealth(((Player*)other)->getHealth() - this->getHealth());
-		//this->animateDeath();
+		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
 	else
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+}
+void Enemy::animateDeath()
+{
+	AnimateObject * anObj = new AnimateObject(this->x, this->y);
+	gameObjects.push_back(anObj);
 }
