@@ -19,7 +19,7 @@ Player::Player()
 
 	texture = Util::loadTexture("textures/metal_plate.jpg");
 
-	shader = Util::createShaderProgram("shaders/meshlighting.vert", "shaders/meshlighting.frag");
+	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
 
 	shootSoundBuffer.loadFromFile("sounds/laser_shot.wav");
 	shootSound.setBuffer(shootSoundBuffer);
@@ -47,6 +47,8 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 		accelerationBackward = down ? 1.0f : 0.0f;
 	} else if (key == ' ') {
 		firing = down;
+	} else if (key == 'j') {
+		health -= 1;
 	}
 }
 
@@ -115,6 +117,9 @@ void Player::render() {
 	GLint originalProgram;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
 	glUseProgram(shader);
+
+	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_TRUE);
+	glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f, 10.0f, 1.0f - health / 100.0f));
 
 	static OBJModel lol("models/tiefighter.obj");
 	lol.draw();
