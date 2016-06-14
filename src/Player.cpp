@@ -77,11 +77,17 @@ void Player::tick(float deltaTime) {
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
 	//printf("angle = %g\n",angle);
+	// Force player back down if he goes too far up
 	if (-y > upperBoundary) {
 		if (angle <= 270 && angle >= 90)
 			angle += (1 + y / upperBoundary);
 		else
 			angle -= (1 + y / upperBoundary);
+	}
+	// Destroy if lower than lowerBoundary
+	printf("-y = %f \n", -y);
+	if (-y < lowerBoundary) {
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
 	timeUntilNextFire -= deltaTime;
 	if(firing && timeUntilNextFire <= 0.0f){
