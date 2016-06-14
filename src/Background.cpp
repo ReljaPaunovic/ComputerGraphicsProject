@@ -83,7 +83,33 @@ void Background::layer1(int viewx,float freq1){
 
 }
 
+
+void drawGrid(){
+	
+}
+
 void Background::render(float viewx){
+
+
+	glMatrixMode(GL_MODELVIEW);
+	glScalef(3000, 3000, 3000);
+	glRotatef(270,0,0,1);
+	GLfloat mat_specular[] = {100.0, 100.0, 100.0, 1.0};
+	GLfloat mat_shininess[] = {50.0};
+	GLfloat light_position[] = {0, 0 - 0, -50.0, 0.0};
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	//glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	plane.draw();
+	std::cout<<"drawing plane";
+	glDisable(GL_LIGHTING);
+
+/*
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -94,13 +120,11 @@ void Background::render(float viewx){
 	glUniform1i(uniLayer, 0);
 	layer1((int) viewx,800);
 
-
+*/
 }
 
 
-Background::Background()
-{
-}
+
 
 
 Background::~Background()
