@@ -417,8 +417,8 @@ int main(int argc, char** argv) {
 	background = new Background();
 	enemy = new Enemy();
 
-	//boss = new Boss();
-	//gameObjects.push_back(boss);
+	boss = new Boss();
+	gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
 
