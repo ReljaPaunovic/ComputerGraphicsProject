@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\AnimateObject.cpp" />
     <ClCompile Include="..\..\src\Background.cpp" />
     <ClCompile Include="..\..\src\Boss.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
@@ -24,6 +25,7 @@
     <ClCompile Include="..\..\src\Projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\AnimateObject.h" />
     <ClInclude Include="..\..\src\Background.h" />
     <ClInclude Include="..\..\src\Boss.h" />
     <ClInclude Include="..\..\src\Camera.h" />
