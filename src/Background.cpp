@@ -93,7 +93,7 @@ void Background::render(float viewx){
 
 	glMatrixMode(GL_MODELVIEW);
 	glScalef(3000, 3000, 3000);
-	glRotatef(270,0,0,1);
+	glRotatef(0,0,0,1);
 	GLfloat mat_specular[] = {100.0, 100.0, 100.0, 1.0};
 	GLfloat mat_shininess[] = {50.0};
 	GLfloat light_position[] = {0, 0 - 0, -50.0, 0.0};
