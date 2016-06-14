@@ -49,6 +49,9 @@ private:
 	float upperBoundary = 200;
 	float lowerBoundary = -800;
 
+	float roll = 0.0f;
+	float rollTarget = 0.0f;
+
 	GLuint texture;
 	GLuint shader;
 };

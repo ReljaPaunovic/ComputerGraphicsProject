@@ -50,6 +50,14 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 }
 
 void Player::tick(float deltaTime) {
+	// Roll player to currently intended roll (based on turning or not)
+	float deltaRoll = rollTarget - roll;
+	roll += deltaRoll * deltaTime * velocity / 100.0f;
+
+	rollTarget = 0.0f;
+	if (rotationLeft) rollTarget += -15;
+	if (rotationRight) rollTarget += 15;
+
 	if (health <= 0)
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	angle -= 180.0f * rotationLeft * deltaTime;
@@ -94,6 +102,8 @@ void Player::onCollide(GameObject* other) {
 
 void Player::render() {
 	setupTransformation();
+
+	glRotatef(roll, 1, 0, 0);
 
 	glEnable(GL_TEXTURE_2D);
 
