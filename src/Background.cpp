@@ -106,7 +106,7 @@ void Background::render(float viewx){
 	//glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	plane.draw();
-	std::cout<<"drawing plane";
+
 	glDisable(GL_LIGHTING);
 
 /*

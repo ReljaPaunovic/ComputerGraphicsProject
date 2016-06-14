@@ -397,7 +397,7 @@ int main(int argc, char** argv) {
 
 	Boss* boss = new Boss();
 	gameObjects.push_back(boss);
-	
+	background = new Background();
 	gameObjects.push_back(player);
 
 	// Set up rendering

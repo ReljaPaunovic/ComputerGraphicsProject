@@ -5,7 +5,7 @@ class Background
 {
 public:
 	Background():
-		plane("models/head.obj"){
+		plane("models/plane.obj"){
 		}
 
 	~Background();
