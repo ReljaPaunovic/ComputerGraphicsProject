@@ -40,8 +40,6 @@ private:
 	GLuint eyeTexture;
 	GLuint rivetTexture;
 
-	GLuint loadTexture(const std::string& filename);
-
 	float xDirection;
 	float yDirection;
 
