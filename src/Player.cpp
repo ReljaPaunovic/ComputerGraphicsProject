@@ -114,16 +114,16 @@ void Player::render() {
 		glColor3f(1.0f, 1.0f, 1.0f);
 		
 		glTexCoord2f(0, 0);
-		glVertex2f(0, 0);
+		glVertex3f(0, 0, 2);
 
 		glTexCoord2f(1, 0);
-		glVertex2f(96, 0);
+		glVertex3f(96, 0, 2);
 
 		glTexCoord2f(1, 1);
-		glVertex2f(96, 96);
+		glVertex3f(96, 96, 2);
 
 		glTexCoord2f(0, 1);
-		glVertex2f(0, 96);
+		glVertex3f(0, 96, 2);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
