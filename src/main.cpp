@@ -23,6 +23,7 @@
 #include <cmath>
 #include <algorithm>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 #include "main.h"
 
@@ -41,6 +42,7 @@ Camera* camera;
 Enemy* enemy;
 Background* background;
 GameObject* boss;
+bool gameOver = false;
 
 Stopwatch frameTimer;
 Stopwatch gameTimer;
@@ -55,6 +57,51 @@ GLint playerPositionUniformLoc[2];
 GLint timeUniformLoc[2];
 
 GLint mountainShader;
+
+void print_stroke_string(void* font, char* s)
+{
+	if (s && strlen(s)) {
+		while (*s) {
+			glutStrokeCharacter(font, *s);
+			s++;
+		}
+	}
+}
+
+void displayScore()
+{
+	char buffer[50];
+	sprintf(buffer, "Score : %d", player->killCount);
+	float stroke_scale = 0.2f;
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(2.0);
+	glPushMatrix(); {
+		glTranslatef( WIDTH / 4, 20, 0.0);
+		glRotatef(180, 1,0,0);
+		glScalef(stroke_scale, stroke_scale, stroke_scale);
+		print_stroke_string(
+			GLUT_STROKE_ROMAN, buffer );
+	}
+	glPopMatrix();
+}
+void displayGameOver() {
+
+	float stroke_scale = 0.2f;
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(2.0);
+	glPushMatrix(); {
+		glTranslatef(WIDTH / 4, HEIGHT / 4, 0.0);
+		glRotatef(180, 1, 0, 0);
+		glScalef(stroke_scale, stroke_scale, stroke_scale);
+		print_stroke_string(
+			GLUT_STROKE_ROMAN, "GAME OVER");
+	}
+	glPopMatrix();
+}
 
 double distanceCalculate(double x1, double y1, double x2, double y2)
 {
@@ -139,7 +186,7 @@ void initDisplay() {
 
 int minx=0;
 int maxx=0;
-const double spawnFactor = 1000;
+const double spawnFactor = 5000;
 const double SpawnScaler = 1;
 const int spawnRangeMin = -400;
 const int spawnRangeMax = 1200;
@@ -174,6 +221,11 @@ void enemySpawner(float deltatime){
 }
 
 void display() {
+	static bool firstTime = true;
+	if (firstTime) {
+		frameTimer.restart();
+	}
+
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
 
@@ -185,6 +237,7 @@ void display() {
 
 	drawGameObjects(deltaTime, true);
 	
+	
 	// Draw game world to post-processing buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0].fbo);
 	glUseProgram(0);
@@ -192,7 +245,7 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-	//enemySpawner(deltaTime);
+	enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime, false);
 
@@ -244,6 +297,11 @@ void display() {
 	glutSwapBuffers();
 
 	glutPostRedisplay();
+
+	if (firstTime) {
+		frameTimer.restart();
+		firstTime = false;
+	}
 }
 
 void drawPostProcessing(float deltaTime, int pass) {
@@ -336,11 +394,15 @@ void drawUI(float deltaTime) {
 	glTranslatef(30, 30, 0);
 	glScalef(2.5f, 2.5f, 1.0f);
 
+	
+
 	// Draw player health bar
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, healthBarTexture);
 
 	float healthWidth = 100.0f;
+
+	
 
 	Util::drawTexturedQuad(glm::vec2(0, 0), glm::vec2(7, 16), glm::vec2(0, 0), glm::vec2(7.0f/28.0f, 16.0f/16.0f));
 	Util::drawTexturedQuad(glm::vec2(healthWidth + 7, 0), glm::vec2(healthWidth + 14, 16), glm::vec2(13.0f/28.0f, 0), glm::vec2(20.0f / 28.0f, 16.0f / 16.0f));
@@ -359,6 +421,10 @@ void drawUI(float deltaTime) {
 
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
+
+	displayScore();
+	if (gameOver)
+		displayGameOver();
 }
 
 void setShader(int i) {
@@ -404,6 +470,9 @@ void keyboardUp(unsigned char key, int x, int y) {
 	}
 }
 
+
+
+
 int main(int argc, char** argv) {
 	// TODO: Only apply oil painting to terrain
 	// Initialize GLUT
@@ -428,7 +497,7 @@ int main(int argc, char** argv) {
 
 
 	boss = new Boss();
-	gameObjects.push_back(boss);
+	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
 

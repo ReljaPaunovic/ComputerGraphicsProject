@@ -5,15 +5,18 @@
 #include <cmath>
 #include "BossSegment.h"
 #include "Util.h"
+#include "Projectile.h"
+
+
 
 Boss::~Boss()
 {
 }
 
 void Boss::loadTextures() {
-	x = 1000;
-	y = 100;
-	speed = 2;
+	x = 32000;
+	y = 750;
+	speed = 4;
 	eyeTexture = Util::loadTexture("textures/hal.png");
 	rivetTexture = Util::loadTexture("textures/metal_rivets.jpg");
 }
@@ -73,8 +76,19 @@ void Boss::render() {
 	glEnable(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, rivetTexture);
+	//***********
+	GLint originalProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+	glUseProgram(shader);
 
+	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_TRUE);
+	glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f / 30, 10.0f / 30, (1 - currentNumSegments * 1.0f / numSegments)));
+	//printf("%f \n", 1 - currentNumSegments * 1.0f / numSegments);
 	modelHead.draw();
+
+	glUseProgram(originalProgram);
+	//**************
+	
 
 	glBindTexture(GL_TEXTURE_2D, eyeTexture);
 
@@ -96,4 +110,30 @@ void Boss::render() {
 
 void Boss::onCollide(GameObject* other) {
 
+	if (dynamic_cast<Player*>(other) != NULL) {
+		// If the tail has been destroyed
+		if (tail == nullptr) {
+			((Player*)other)->animateDeath();
+			this->animateDeath();
+			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
+			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		}
+		//If not, kill the player
+		else {
+			((Player*)other)->setHealth(0);
+			((Player*)other)->animateDeath();
+			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
+		}
+	}
+	if (dynamic_cast<Projectile*>(other) != NULL) {
+		if (tail == nullptr) {
+			// kill boss and erase projectile from the game
+			this->animateDeath();
+			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
+			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		}
+		else {
+			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
+		}
+	}
 }
