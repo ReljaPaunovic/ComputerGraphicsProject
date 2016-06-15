@@ -35,7 +35,7 @@ void AnimateObject::tick(float deltaTime)
 	explosionPos = glm::vec2(this->x, this->y);
 
 	shockwaveRange = 50.0f;
-	shockwaveDistance = timeSoFar / (numSteps * StepDelay) * 1000.0f;
+	shockwaveDistance = timeSoFar / (numSteps * StepDelay) * 2000.0f;
 
 	if (currentStep < numSteps) {
 		timeUntilNextStep -= deltaTime;
@@ -62,6 +62,8 @@ void AnimateObject::render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1f);
 
 	glBegin(GL_QUADS);
 		glColor3f(1.0f, 1.0f, 1.0f);
@@ -79,6 +81,7 @@ void AnimateObject::render()
 		glVertex3f(0, 96, z);
 	glEnd();
 
+	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 
 	resetTransformation();
