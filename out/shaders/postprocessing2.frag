@@ -12,12 +12,15 @@ uniform float shockwaveDistance;
 uniform float cameraX;
 uniform float cameraY;
 
+uniform float screenWidth;
+uniform float screenHeight;
+
 vec2 getShockwaveCoords(vec2 finalPos, float dist) {
     dist = abs(dist - shockwaveDistance);
 
     if (dist < shockwaveRange) {
         float t = time * gl_TexCoord[0].x * 5.0 + dist;
-        vec2 maxOffset = vec2(sin(t) * 10.0 / 800.0, sin(t) * 10.0 / 600.0);
+        vec2 maxOffset = vec2(sin(t) * 10.0 / screenWidth, sin(t) * 10.0 / screenHeight);
         vec2 actualOffet = mix(maxOffset, vec2(0.0, 0.0), dist / shockwaveRange);
 
         return gl_TexCoord[0].xy + actualOffet;
@@ -28,7 +31,7 @@ vec2 getShockwaveCoords(vec2 finalPos, float dist) {
 
 void main() {
     vec2 finalPos = explosionPos - vec2(cameraX, cameraY);
-    finalPos.y = 600.0 - finalPos.y;
+    finalPos.y = screenHeight - finalPos.y;
 
     float dist = distance(gl_FragCoord.xy, finalPos);
 
