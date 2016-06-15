@@ -86,7 +86,7 @@ void OBJModel::buildDisplayList() {
 	glBegin(GL_TRIANGLES);
 	glColor3f(1, 1, 1);
 
-	for (int i = 0; i < triangles.size(); i++) {
+	for (int i = 0; i < (int) triangles.size(); i++) {
 		for (int j = 0; j < 3; j++) {
 			glm::ivec3 vertex = triangles[i][j];
 
