@@ -12,14 +12,14 @@ public:
 	Boss() :
 		modelHead("models/head.obj"),
 		modelEye("models/eye.obj") {
-		velocity = 400;
+		velocity = 1600;
 		collider = nullptr;
 		numSegments = 32;
 		loadTextures();
 		firstTime = true;
 		BossSegment* previous = nullptr;
 		for (int i = 0; i < numSegments; i++) {
-			BossSegment * bs = new BossSegment(previous, this->x, this->y, i);
+			BossSegment * bs = new BossSegment( previous, this->x, this->y, i);
 			gameObjects.push_back(bs);
 			previous = bs;
 		}
@@ -32,6 +32,10 @@ public:
 	void tick(float deltaTime);
 	void render();
 	void onCollide(GameObject* other);
+
+	float getSpeed() {
+		return speed;
+	}
 
 private:
 	OBJModel modelHead;

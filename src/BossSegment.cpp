@@ -3,6 +3,7 @@
 #include "main.h"
 #include "OBJModel.h"
 #include "Util.h"
+//#include "Boss.h"
 
 
 
@@ -20,7 +21,12 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 
 	texture = Util::loadTexture("textures/scales.jpg");
 	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
-
+	
+	if (obj != nullptr)
+		speed = obj->speed;
+	else {
+		speed = 5;
+	}
 }
 
 BossSegment::~BossSegment()
@@ -29,8 +35,6 @@ BossSegment::~BossSegment()
 
 void BossSegment::tick(float deltaTime)
 {
-	//this->x = boss->x;
-	//this->y = boss->y;
 	if (previousSegment != nullptr) {
 		xDirection = previousSegment->x - this->x;
 		yDirection = previousSegment->y - this->y;
@@ -40,8 +44,8 @@ void BossSegment::tick(float deltaTime)
 			yDirection /= length;
 		}
 		if (length >= size*2) {
-			this->x += xDirection;
-			this->y += yDirection;
+			this->x += xDirection * speed;
+			this->y += yDirection * speed;
 		}
 	}
 	else {
@@ -53,8 +57,8 @@ void BossSegment::tick(float deltaTime)
 			yDirection /= length;
 		}
 		if (length >= size*2) {
-			this->x += xDirection;
-			this->y += yDirection;
+			this->x += xDirection * speed;
+			this->y += yDirection * speed;
 		}
 	}
 	
