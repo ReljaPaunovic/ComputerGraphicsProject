@@ -18,7 +18,7 @@ Player::Player()
 	cx = 15;
 	cy = 15;
 	collider = new Collider(35);
-	velocity = 0;
+	velocity = 800;
 	//velocity = 0;
 
 	texture = Util::loadTexture("textures/metal_plate.jpg");

@@ -40,7 +40,7 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 	}
 	else {
 		//SPEED IS HARDCODED TO BOSS
-		speed = 4;
+		speed = 240;
 	}
 	if (i == totalNumberOfSegments - 1)
 		nextSegment = nullptr;
@@ -61,8 +61,8 @@ void BossSegment::tick(float deltaTime)
 			yDirection /= length;
 		}
 		if (length >= size*2) {
-			this->x += xDirection * speed;
-			this->y += yDirection * speed;
+			this->x += xDirection * speed * deltaTime;
+			this->y += yDirection * speed * deltaTime;
 		}
 	}
 	else {
@@ -74,8 +74,8 @@ void BossSegment::tick(float deltaTime)
 			yDirection /= length;
 		}
 		if (length >= size*2) {
-			this->x += xDirection * speed;
-			this->y += yDirection * speed;
+			this->x += xDirection * speed * deltaTime;
+			this->y += yDirection * speed * deltaTime;
 		}
 	}
 	

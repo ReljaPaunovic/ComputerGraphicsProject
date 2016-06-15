@@ -16,7 +16,7 @@ Boss::~Boss()
 void Boss::loadTextures() {
 	x = 32000;
 	y = 750;
-	speed = 4;
+	speed = 240;
 	eyeTexture = Util::loadTexture("textures/hal.png");
 	rivetTexture = Util::loadTexture("textures/metal_rivets.jpg");
 }
@@ -32,8 +32,8 @@ void Boss::tick(float deltaTime) {
 		xDirection /= normalizationFactor;
 		yDirection /= normalizationFactor;
 
-		x += xDirection * speed;
-		y += yDirection * speed;
+		x += xDirection * speed * deltaTime;
+		y += yDirection * speed * deltaTime;
 	//}
 	/*else {
 		float x1 = player->x;
