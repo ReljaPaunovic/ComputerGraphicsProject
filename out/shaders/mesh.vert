@@ -9,7 +9,7 @@ float roundCoord(float c) {
 
 void main() {
     gl_TexCoord[0] = gl_MultiTexCoord0;
-    normal = gl_NormalMatrix * gl_Normal;
+    normal = normalize(gl_NormalMatrix * gl_Normal);
 
     vec4 pos = gl_Vertex;
     if (enableSimplification) {

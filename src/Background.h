@@ -27,6 +27,5 @@ private:
 
 	void renderMountains(float);
 	void renderSky();
-	void renderWater();
 };
 

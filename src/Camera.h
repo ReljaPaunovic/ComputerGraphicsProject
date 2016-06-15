@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include <glm/mat4x4.hpp>
 
 class Camera {
 public:
@@ -7,6 +8,9 @@ public:
 
 	void updatePosition(Player* player);
 	void setProjection();
+	void setLightProjection();
+
+	glm::mat4 getLightProjection();
 
 	float getX() const;
 	float getY() const;

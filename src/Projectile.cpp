@@ -2,6 +2,7 @@
 #include "Util.h"
 #include <stb_image.h>
 #include <cmath>
+#include "main.h"
 #define PI 3.14
 
 Projectile::Projectile(float x, float y, float direction, float velocity)
@@ -26,6 +27,8 @@ Projectile::~Projectile()
 void Projectile::tick(float deltaTime) {
 	x += velocity * cos(Util::deg2rad(angle)) * deltaTime;
 	y += velocity * sin(Util::deg2rad(angle)) * deltaTime;
+	if(y > 650)
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 }
 
 void Projectile::onCollide(GameObject* other) {
@@ -38,6 +41,8 @@ void Projectile::render() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
 
 	glBegin(GL_QUADS);
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -54,6 +59,7 @@ void Projectile::render() {
 	glVertex3f(-(size * 10) / 2.0f, (size * 10) / 2.0f, 1);
 	glEnd();
 
+	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	/*
 	glPushMatrix();

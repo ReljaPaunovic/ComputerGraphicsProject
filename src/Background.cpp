@@ -1,8 +1,6 @@
 #include "Background.h"
-#include <iostream>
-#include <math.h>
 #include <GL/glew.h>
-#include <time.h>
+#include "main.h"
 
 void Background::render(float viewx){
 	renderMountains(viewx);
@@ -12,18 +10,11 @@ void Background::render(float viewx){
 void Background::renderMountains(float viewx) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(viewx + 400, 300, -300);
-	glScalef(400, -1000, 500);
-	GLfloat mat_specular[] = {100.0, 100.0, 100.0, 1.0};
-	GLfloat mat_shininess[] = {50.0};
-	GLfloat light_position[] = {0, 0 - 0, -50.0, 0.0};
-
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
+	glTranslatef(viewx + WIDTH / 2, 300, -300);
+	glScalef(WIDTH / 2, -1000, 500);
+	
 	glEnable(GL_TEXTURE_2D);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureRock);
 	glActiveTexture(GL_TEXTURE1);
@@ -32,6 +23,13 @@ void Background::renderMountains(float viewx) {
 	glBindTexture(GL_TEXTURE_2D, textureRockGrass);
 
 	plane.draw();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Background::renderSky() {
@@ -46,29 +44,25 @@ void Background::renderSky() {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0, 800, 600, 0, -1000, 1000);
+	glOrtho(0, WIDTH, HEIGHT, 0, -1000, 1000);
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
-	glVertex3f(0, 0, -900);
+	glVertex3i(0, 0, -900);
 
 	glTexCoord2f(1, 0);
-	glVertex3f(800, 0, -900);
+	glVertex3i(WIDTH, 0, -900);
 
 	glTexCoord2f(1, 1);
-	glVertex3f(800, 600, -900);
+	glVertex3i(WIDTH, HEIGHT, -900);
 
 	glTexCoord2f(0, 1);
-	glVertex3f(0, 600, -900);
+	glVertex3i(0, HEIGHT, -900);
 	glEnd();
 
 	glPopMatrix();
 
 	glDisable(GL_TEXTURE_2D);
-}
-
-void Background::renderWater() {
-	// TODO
 }
 
 Background::~Background()

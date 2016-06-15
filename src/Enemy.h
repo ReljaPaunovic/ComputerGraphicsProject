@@ -18,13 +18,11 @@ public:
 	float getHealth() {
 		return health;
 	}
-	void animateDeath();
-	OBJModel* model;
-	GLuint texture;
 private:
 	float z;
-	float health = 10;
+	float health = 5;
 
-
+	float spin = 0.0f;
+	float spinRate;
 };
 

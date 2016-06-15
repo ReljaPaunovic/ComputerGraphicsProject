@@ -1,18 +1,18 @@
 #include "Enemy.h"
 #include <stdio.h>
 #include <GL/freeglut.h>
-#include <iostream>
 #include "Player.h"
-#define PI 3.14
 #include <cmath>
 #include <typeinfo>
 #include "main.h"
 #include <algorithm>
-#include "AnimateObject.h"
+#include <random>
 #include "Projectile.h"
 #include "OBJModel.h"
 #include "Util.h"
 
+static GLint shader = -1;
+static GLint texture = -1;
 
 Enemy::Enemy()
 {
@@ -22,30 +22,23 @@ Enemy::Enemy()
 	cx = 48;
 	cy = 48;
 	angle = 0;
-	collider = new Collider(90);
+	collider = new Collider(100);
 	
 	// this is to lower the chance bombs will overlap
 	z = (float) (10 + rand() % 100);
 
+	if (texture == -1) {
+		texture = Util::loadTexture("textures/minemat.png");
+	}
 
-	int textureWidth, textureHeight;
-	int textureComponents;
-	stbi_uc* pixels = stbi_load("textures/minemat.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
+	if (shader == -1) {
+		shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+	}
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	stbi_image_free(pixels);
-
-
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis;
+	spinRate = dis(gen);
 }
 
 
@@ -58,36 +51,25 @@ void Enemy::render() {
 	setupTransformation();
 
 	glMatrixMode(GL_MODELVIEW);
-	glScalef(100, 100, 100);
+	glRotatef(spin, 1, 1, 1);
 
-	GLfloat mat_specular[] = {10.0, 10.0, 10.0, 1.0};
-	GLfloat mat_shininess[] = {50.0};
-	GLfloat light_position[] = {this->x, this->y - 200, -50.0, 0.0};
-	glTranslatef(this->x, this->y, 2);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	GLint originalProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+	glUseProgram(shader);
 
-	//glEnable(GL_LIGHTING);
-//	glEnable(GL_LIGHT0);
-	//glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, texture);
-	if(model!=NULL)
-	model->draw();
-	else
-		std::cout<<("arg")<<std::endl;
-
+	static OBJModel* mine = new OBJModel("models/mine.obj");
+	mine->draw();
 
 	glDisable(GL_TEXTURE_2D);
 
-	glDisable(GL_LIGHTING);
-
+	glUseProgram(originalProgram);
 }
 
 void Enemy::tick(float deltaTime) {
-
+	spin += deltaTime * spinRate * 45.0f;
 }
 
 
@@ -98,6 +80,7 @@ void Enemy::onCollide(GameObject* other) {
 		((Player*)other)->setHealth(((Player*)other)->getHealth() - this->getHealth());
 		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		((Player*)other)->killCount++;
 	}
 	//Check if it is other enemy
 	if (dynamic_cast<Enemy*>(other) != NULL) {
@@ -108,10 +91,6 @@ void Enemy::onCollide(GameObject* other) {
 	if (dynamic_cast<Projectile*>(other) != NULL) {
 		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		player->killCount++;
 	}
-}
-
-void Enemy::animateDeath(){
-	AnimateObject * anObj = new AnimateObject(this->x, this->y, this->z);
-	gameObjects.push_back(anObj);
 }

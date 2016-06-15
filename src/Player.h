@@ -33,9 +33,10 @@ public:
 	float getHealth() {
 		return health;
 	}
+	int killCount = 0;
 
 private:
-	float health = 80;
+	float health = 100;
 
 	float velocity = 0.0f;
 
@@ -49,8 +50,8 @@ private:
 	float firingDelay = 1.0f / 2.0f; 
 	float timeUntilNextFire = 0.0f;
 
-	float upperBoundary = 200;
-	float lowerBoundary = -800;
+	float upperBoundary = 500;
+	float lowerBoundary = -650;
 
 	float roll = 0.0f;
 	float rollTarget = 0.0f;

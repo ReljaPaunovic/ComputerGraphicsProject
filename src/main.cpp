@@ -22,14 +22,13 @@
 #include <random>
 #include <cmath>
 #include <algorithm>
+#include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 #include "main.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
-const int WIDTH = 800;
-const int HEIGHT = 600;
 
 float explosionRange = 0.0f;
 glm::vec2 explosionPos;
@@ -43,9 +42,13 @@ Camera* camera;
 Enemy* enemy;
 Background* background;
 GameObject* boss;
+bool gameOver = false;
 
 Stopwatch frameTimer;
 Stopwatch gameTimer;
+
+// Shadow-mapping related
+Framebuffer shadowBuffer;
 
 // Post-processing related objects
 Framebuffer framebuffers[2];
@@ -54,6 +57,51 @@ GLint playerPositionUniformLoc[2];
 GLint timeUniformLoc[2];
 
 GLint mountainShader;
+
+void print_stroke_string(void* font, char* s)
+{
+	if (s && strlen(s)) {
+		while (*s) {
+			glutStrokeCharacter(font, *s);
+			s++;
+		}
+	}
+}
+
+void displayScore()
+{
+	char buffer[50];
+	sprintf(buffer, "Score : %d", player->killCount);
+	float stroke_scale = 0.2f;
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(2.0);
+	glPushMatrix(); {
+		glTranslatef( WIDTH / 4, 20, 0.0);
+		glRotatef(180, 1,0,0);
+		glScalef(stroke_scale, stroke_scale, stroke_scale);
+		print_stroke_string(
+			GLUT_STROKE_ROMAN, buffer );
+	}
+	glPopMatrix();
+}
+void displayGameOver() {
+
+	float stroke_scale = 0.2f;
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(2.0);
+	glPushMatrix(); {
+		glTranslatef(WIDTH / 4, HEIGHT / 4, 0.0);
+		glRotatef(180, 1, 0, 0);
+		glScalef(stroke_scale, stroke_scale, stroke_scale);
+		print_stroke_string(
+			GLUT_STROKE_ROMAN, "GAME OVER");
+	}
+	glPopMatrix();
+}
 
 double distanceCalculate(double x1, double y1, double x2, double y2)
 {
@@ -93,7 +141,6 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 			if (x <= (obj2->collider->width / 2) || y <= (obj2->collider->height / 2)) {
 				obj1->onCollide(obj2);
 				obj2->onCollide(obj1);
-
 			}
 		}
 	}
@@ -122,6 +169,9 @@ void initDisplay() {
 	framebuffers[0] = Framebuffer(WIDTH, HEIGHT);
 	framebuffers[1] = Framebuffer(WIDTH, HEIGHT);
 
+	// should really be a power of 2, but for convenience we do this
+	shadowBuffer = Framebuffer(WIDTH, HEIGHT);
+
 	// Set up clear values
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -136,20 +186,20 @@ void initDisplay() {
 
 int minx=0;
 int maxx=0;
-const double spawnFactor = 1000;
+const double spawnFactor = 5000;
 const double SpawnScaler = 1;
 const int spawnRangeMin = -400;
 const int spawnRangeMax = 1200;
 std::default_random_engine generator;
 std::exponential_distribution<double> distribution(SpawnScaler);
-OBJModel* mine = new OBJModel("models/main.obj");
+
 void enemySpawner(float deltatime){
 
 	int x = (int)camera->getX();
 	if(x > maxx || x < minx ){
 		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
 			enemy = new Enemy();
-			enemy->model=mine;
+			//enemy->model = mine;
 
 			enemy->y=(float) ((rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin);
 			gameObjects.push_back(enemy);
@@ -171,8 +221,22 @@ void enemySpawner(float deltatime){
 }
 
 void display() {
+	static bool firstTime = true;
+	if (firstTime) {
+		frameTimer.restart();
+	}
+
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
+
+	// Draw game world from perspective of light
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowBuffer.fbo);
+	glUseProgram(0);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	drawGameObjects(deltaTime, true);
+	
 	
 	// Draw game world to post-processing buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0].fbo);
@@ -181,9 +245,9 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-	//enemySpawner(deltaTime);
+	enemySpawner(deltaTime);
 
-	drawGameObjects(deltaTime);
+	drawGameObjects(deltaTime, false);
 
 	// Render quad with first post-processing pass to second
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1].fbo);
@@ -191,6 +255,8 @@ void display() {
 
 	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraX"), camera->getX());
 	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraY"), camera->getY());
+	glUniform1f(glGetUniformLocation(ppShaders[0], "screenWidth"), (float) WIDTH);
+	glUniform1f(glGetUniformLocation(ppShaders[0], "screenHeight"), (float) HEIGHT);
 
 	if (playerPositionUniformLoc[0] != -1) {
 		glUniform2f(playerPositionUniformLoc[0], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
@@ -207,6 +273,8 @@ void display() {
 
 	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraX"), camera->getX());
 	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraY"), camera->getY());
+	glUniform1f(glGetUniformLocation(ppShaders[1], "screenWidth"), (float) WIDTH);
+	glUniform1f(glGetUniformLocation(ppShaders[1], "screenHeight"), (float) HEIGHT);
 
 	glUniform1f(glGetUniformLocation(ppShaders[1], "explosionRange"), explosionRange);
 	glUniform2f(glGetUniformLocation(ppShaders[1], "explosionPos"), explosionPos.x, explosionPos.y);
@@ -229,6 +297,11 @@ void display() {
 	glutSwapBuffers();
 
 	glutPostRedisplay();
+
+	if (firstTime) {
+		frameTimer.restart();
+		firstTime = false;
+	}
 }
 
 void drawPostProcessing(float deltaTime, int pass) {
@@ -261,24 +334,45 @@ void drawPostProcessing(float deltaTime, int pass) {
 	glDisable(GL_TEXTURE_2D);
 }
 
-void drawGameObjects(float deltaTime) {
+void drawGameObjects(float deltaTime, bool shadowRender) {
 	// Set up world projection
 	camera->updatePosition(player);
-	camera->setProjection();
+
+	if (shadowRender) {
+		camera->setLightProjection();
+	} else {
+		camera->setProjection();
+	}
 
 	// Draw background
 	glUseProgram(mountainShader);
 	glUniform1f(glGetUniformLocation(mountainShader, "cameraX"), camera->getX());
+	glUniform1f(glGetUniformLocation(mountainShader, "screenWidth"), (float) WIDTH);
+	glUniform1f(glGetUniformLocation(mountainShader, "screenHeight"), (float) HEIGHT);
 	glUniform1i(glGetUniformLocation(mountainShader, "texSnow"), 1);
 	glUniform1i(glGetUniformLocation(mountainShader, "texRockGrass"), 2);
+	glUniform1i(glGetUniformLocation(mountainShader, "texShadowMap"), 3);
+
+	auto lightProj = camera->getLightProjection();
+	glUniformMatrix4fv(glGetUniformLocation(mountainShader, "shadowMapProjection"), 1, GL_FALSE, glm::value_ptr(lightProj));
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, shadowBuffer.depthTexture);
+	glActiveTexture(GL_TEXTURE0);
+
 	background->render(camera->getX());
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+
 	glUseProgram(0);
 
 	// Copy is made such that game objects can remove themselves or spawn new game objects
 	std::vector<GameObject*> gameObjectsCopy = gameObjects;
 
 	for (GameObject* obj : gameObjectsCopy) {
-		obj->tick(deltaTime);
+		if (!shadowRender) obj->tick(deltaTime);
 		obj->render();
 	}
 }
@@ -300,11 +394,15 @@ void drawUI(float deltaTime) {
 	glTranslatef(30, 30, 0);
 	glScalef(2.5f, 2.5f, 1.0f);
 
+	
+
 	// Draw player health bar
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, healthBarTexture);
 
 	float healthWidth = 100.0f;
+
+	
 
 	Util::drawTexturedQuad(glm::vec2(0, 0), glm::vec2(7, 16), glm::vec2(0, 0), glm::vec2(7.0f/28.0f, 16.0f/16.0f));
 	Util::drawTexturedQuad(glm::vec2(healthWidth + 7, 0), glm::vec2(healthWidth + 14, 16), glm::vec2(13.0f/28.0f, 0), glm::vec2(20.0f / 28.0f, 16.0f / 16.0f));
@@ -314,8 +412,19 @@ void drawUI(float deltaTime) {
 	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth + 7, 16), glm::vec2(20.0f / 28.0f, 0), glm::vec2(21.0f / 28.0f, 16.0f / 16.0f));
 	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth * healthFraction + 7, 16), glm::vec2(7.0f / 28.0f, 0), glm::vec2(13.0f / 28.0f, 16.0f / 16.0f));
 
+	// Shadow map debugging
+	if (ENABLE_DEPTH_DEBUG) {
+		glLoadIdentity();
+		glBindTexture(GL_TEXTURE_2D, shadowBuffer.depthTexture);
+		Util::drawTexturedQuad(glm::vec2(WIDTH - 250, 250), glm::vec2(WIDTH - 50, 50), glm::vec2(0, 0), glm::vec2(1, 1));
+	}
+
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
+
+	displayScore();
+	if (gameOver)
+		displayGameOver();
 }
 
 void setShader(int i) {
@@ -361,6 +470,9 @@ void keyboardUp(unsigned char key, int x, int y) {
 	}
 }
 
+
+
+
 int main(int argc, char** argv) {
 	// TODO: Only apply oil painting to terrain
 	// Initialize GLUT
@@ -384,11 +496,13 @@ int main(int argc, char** argv) {
 	background = new Background();
 
 
-	//boss = new Boss();
+	boss = new Boss();
 	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
 
+	enemy = new Enemy();
+	gameObjects.push_back(enemy);
 
 	// Set up rendering
 	glewInit();

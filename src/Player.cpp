@@ -7,6 +7,9 @@
 #include "main.h"
 #include <algorithm>
 #include "OBJModel.h"
+#include "Boss.h"
+
+bool bossSpawned = false;
 
 Player::Player()
 {
@@ -15,7 +18,8 @@ Player::Player()
 	cx = 15;
 	cy = 15;
 	collider = new Collider(35);
-	velocity = 50;
+	velocity = 800;
+	//velocity = 0;
 
 	texture = Util::loadTexture("textures/metal_plate.jpg");
 
@@ -35,6 +39,8 @@ float Player::getHealth() const {
 	return health;
 }
 
+
+
 void Player::handleKeyboard(unsigned char key, bool down) {
 	// Do we need w and s?
 	if (key == 'a') {
@@ -53,6 +59,22 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 }
 
 void Player::tick(float deltaTime) {
+	// Force player back down if he goes too far up
+	float actualLeft = rotationLeft;
+	float actualRight = rotationRight;
+
+	if (-y > upperBoundary) {
+		if (angle <= 270 && angle >= 90) {
+			//angle += (1 + y / upperBoundary);
+			actualLeft = 1;
+			actualRight = 0;
+		}
+		else {
+			actualRight = 1;
+			actualLeft = 0;
+		}
+	}
+
 	// Roll player to currently intended roll (based on turning or not)
 	float deltaRoll = rollTarget - roll;
 	roll += deltaRoll * deltaTime * velocity / 100.0f;
@@ -61,10 +83,14 @@ void Player::tick(float deltaTime) {
 	if (rotationLeft) rollTarget += -15;
 	if (rotationRight) rollTarget += 15;
 
-	if (health <= 0)
+	if (health <= 0) {
+		gameOver = true;
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
-	angle -= 180.0f * rotationLeft * deltaTime;
-	angle += 180.0f * rotationRight * deltaTime;
+		
+		
+	}
+	angle -= 180.0f * actualLeft * deltaTime;
+	angle += 180.0f * actualRight * deltaTime;
 	// To keep it in range (0, 359)
 	if (angle < 0)
 		angle += 360;
@@ -77,27 +103,31 @@ void Player::tick(float deltaTime) {
 	x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
 	y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
 	//printf("angle = %g\n",angle);
-	// Force player back down if he goes too far up
-	if (-y > upperBoundary) {
-		if (angle <= 270 && angle >= 90)
-			angle += (1 + y / upperBoundary);
-		else
-			angle -= (1 + y / upperBoundary);
-	}
+
 	// Destroy if lower than lowerBoundary
 	if (-y < lowerBoundary) {
+		player->health = 0;
+		gameOver = true;
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		animateDeath();
 	}
 
 	// Should fire from two guns, but can't be bothered to set up the matrix for that right now
 	timeUntilNextFire -= deltaTime;
-	if(firing && timeUntilNextFire <= 0.0f){
+	if (firing && timeUntilNextFire <= 0.0f) {
 		timeUntilNextFire = firingDelay;
 		float spawnX = x + cos(Util::deg2rad(angle)) * 25;
 		float spawnY = y + sin(Util::deg2rad(angle)) * 25;
-		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
+		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 600.0f));
 
 		shootSound.play();
+	}
+	//printf("x = %f \n", x);
+	if (x > 30000 && bossSpawned == false) {
+		bossSpawned = true;
+		printf("BOSS HAS SPAWNED\n");
+		//boss = new Boss();
+		gameObjects.push_back(boss);
 	}
 }
 
