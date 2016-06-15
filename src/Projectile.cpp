@@ -38,6 +38,8 @@ void Projectile::render() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
 
 	glBegin(GL_QUADS);
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -54,6 +56,7 @@ void Projectile::render() {
 	glVertex3f(-(size * 10) / 2.0f, (size * 10) / 2.0f, 1);
 	glEnd();
 
+	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	/*
 	glPushMatrix();
