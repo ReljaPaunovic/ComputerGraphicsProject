@@ -4,8 +4,13 @@
 #include "GameObject.h"
 #include <algorithm>
 
+// Used to keep track of which explosion is allowed to use fragment shader effect now
+static AnimateObject* shaderEffectOwner = nullptr;
+
 AnimateObject::AnimateObject(float x, float y, float z)
 {
+	shaderEffectOwner = this;
+
 	numSteps = 12;
 	currentStep = 0;
 	cx = 48;
@@ -31,11 +36,13 @@ AnimateObject::~AnimateObject()
 
 void AnimateObject::tick(float deltaTime)
 {
-	explosionRange = (1.0f - timeSoFar / (numSteps * StepDelay)) * 400.0f;
-	explosionPos = glm::vec2(this->x, this->y);
+	if (shaderEffectOwner == this) {
+		::explosionRange = std::max(0.0f, (1.0f - timeSoFar / (numSteps * StepDelay)) * 400.0f);
+		::explosionPos = glm::vec2(this->x, this->y);
 
-	shockwaveRange = 50.0f;
-	shockwaveDistance = timeSoFar / (numSteps * StepDelay) * 2000.0f;
+		::shockwaveRange = 50.0f;
+		::shockwaveDistance = std::max(0.0f, timeSoFar / (numSteps * StepDelay) * 2000.0f);
+	}
 
 	if (currentStep < numSteps) {
 		timeUntilNextStep -= deltaTime;
@@ -47,8 +54,10 @@ void AnimateObject::tick(float deltaTime)
 	else {
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 
-		explosionRange = 0.0f;
-		shockwaveRange = 0.0f;
+		if (shaderEffectOwner == this) {
+			::explosionRange = 0.0f;
+			::shockwaveRange = 0.0f;
+		}
 	}
 
 	timeSoFar += deltaTime;

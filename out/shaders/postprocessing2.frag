@@ -44,7 +44,7 @@ void main() {
     explodeColor.r *= 1.1;
     explodeColor.g *= 1.1;
 
-    vec3 finalColor = mix(explodeColor, baseColor, min(1.0, dist / explosionRange));
+    vec3 finalColor = mix(explodeColor, baseColor, max(0.0, min(1.0, dist / explosionRange)));
 
     gl_FragColor = vec4(finalColor, 1.0);
 }
