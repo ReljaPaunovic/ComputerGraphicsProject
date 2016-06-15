@@ -138,7 +138,6 @@ const int spawnRangeMin = -400;
 const int spawnRangeMax = 1200;
 std::default_random_engine generator;
 std::exponential_distribution<double> distribution(SpawnScaler);
-//OBJModel* mine = new OBJModel("models/main.obj");
 
 void enemySpawner(float deltatime){
 
@@ -392,6 +391,8 @@ int main(int argc, char** argv) {
 	background = new Background();
 	gameObjects.push_back(player);
 
+	enemy = new Enemy();
+	gameObjects.push_back(enemy);
 
 	// Set up rendering
 	glewInit();

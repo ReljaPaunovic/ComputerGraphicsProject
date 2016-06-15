@@ -19,12 +19,12 @@ public:
 		return health;
 	}
 	void animateDeath();
-	OBJModel* model;
-	GLuint texture;
 private:
 	float z;
 	float health = 10;
 
-
+	OBJModel* model;
+	GLuint texture;
+	GLuint shader;
 };
 
