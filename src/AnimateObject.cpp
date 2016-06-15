@@ -1,5 +1,6 @@
 #include "AnimateObject.h"
 #include "main.h"
+#include "Util.h"
 #include "GameObject.h"
 #include <algorithm>
 
@@ -14,22 +15,13 @@ AnimateObject::AnimateObject(float x, float y, float z)
 	this->y = y;
 	this->z = z;
 
-	int textureWidth, textureHeight;
-	int textureComponents;
-	stbi_uc* pixels = stbi_load("textures/Explosion.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
+	texture = Util::loadTexture("textures/Explosion.png");
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	explosionSoundBuffer.loadFromFile("sounds/explosion.wav");
+	explosionSound.setBuffer(explosionSoundBuffer);
+	explosionSound.setVolume(100);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	stbi_image_free(pixels);
+	explosionSound.play();
 }
 
 
@@ -39,6 +31,12 @@ AnimateObject::~AnimateObject()
 
 void AnimateObject::tick(float deltaTime)
 {
+	explosionRange = (1.0f - timeSoFar / (numSteps * StepDelay)) * 400.0f;
+	explosionPos = glm::vec2(this->x, this->y);
+
+	shockwaveRange = 50.0f;
+	shockwaveDistance = timeSoFar / (numSteps * StepDelay) * 1000.0f;
+
 	if (currentStep < numSteps) {
 		timeUntilNextStep -= deltaTime;
 		if (timeUntilNextStep <= 0.0f) {
@@ -46,8 +44,14 @@ void AnimateObject::tick(float deltaTime)
 			currentStep++;
 		}
 	}
-	else
+	else {
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+
+		explosionRange = 0.0f;
+		shockwaveRange = 0.0f;
+	}
+
+	timeSoFar += deltaTime;
 }
 
 void AnimateObject::render()

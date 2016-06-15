@@ -14,8 +14,8 @@ void Boss::loadTextures() {
 	x = 1000;
 	y = 100;
 	speed = 0.5;
-	eyeTexture = loadTexture("textures/hal.png");
-	rivetTexture = loadTexture("textures/metal_rivets.jpg");
+	eyeTexture = Util::loadTexture("textures/hal.png");
+	rivetTexture = Util::loadTexture("textures/metal_rivets.jpg");
 }
 
 
@@ -96,28 +96,6 @@ void Boss::render() {
 
 void Boss::onCollide(GameObject* other) {
 
-}
-
-GLuint Boss::loadTexture(const std::string& filename) {
-	GLuint tex;
-
-	int textureWidth, textureHeight;
-	int textureComponents;
-	stbi_uc* pixels = stbi_load(filename.c_str(), &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
-
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	stbi_image_free(pixels);
 
 	return tex;
 }

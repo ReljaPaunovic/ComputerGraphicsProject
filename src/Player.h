@@ -3,6 +3,9 @@
 #include "GameObject.h"
 #include <GL/freeglut.h>
 
+#define SFML_STATIC
+#include <SFML/Audio.hpp>
+
 class Player:
 	public GameObject
 {
@@ -49,6 +52,13 @@ private:
 	float upperBoundary = 200;
 	float lowerBoundary = -800;
 
+	float roll = 0.0f;
+	float rollTarget = 0.0f;
+
 	GLuint texture;
+	GLuint shader;
+
+	sf::SoundBuffer shootSoundBuffer;
+	sf::Sound shootSound;
 };
 

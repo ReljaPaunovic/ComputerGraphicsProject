@@ -6,37 +6,24 @@
 #include <stb_image.h>
 #include "main.h"
 #include <algorithm>
-#define PI 3.14
-
-
+#include "OBJModel.h"
 
 Player::Player()
 {
 	x = 100;
-	y = 300;
-	cx = 48;
-	cy = 48;
+	y = 400;
+	cx = 15;
+	cy = 15;
 	collider = new Collider(35);
-	velocity = 600;
-	//velocity = 0;
+	velocity = 50;
 
-	// Load and create texture
-	int textureWidth, textureHeight;
-	int textureComponents;
-	stbi_uc* pixels = stbi_load("textures/spaceship.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
+	texture = Util::loadTexture("textures/metal_plate.jpg");
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	stbi_image_free(pixels);
+	shootSoundBuffer.loadFromFile("sounds/laser_shot.wav");
+	shootSound.setBuffer(shootSoundBuffer);
+	shootSound.setVolume(50);
 }
 
 
@@ -60,10 +47,20 @@ void Player::handleKeyboard(unsigned char key, bool down) {
 		accelerationBackward = down ? 1.0f : 0.0f;
 	} else if (key == ' ') {
 		firing = down;
+	} else if (key == 'j') {
+		health -= 1;
 	}
 }
 
 void Player::tick(float deltaTime) {
+	// Roll player to currently intended roll (based on turning or not)
+	float deltaRoll = rollTarget - roll;
+	roll += deltaRoll * deltaTime * velocity / 100.0f;
+
+	rollTarget = 0.0f;
+	if (rotationLeft) rollTarget += -15;
+	if (rotationRight) rollTarget += 15;
+
 	if (health <= 0)
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	angle -= 180.0f * rotationLeft * deltaTime;
@@ -92,12 +89,15 @@ void Player::tick(float deltaTime) {
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
 
+	// Should fire from two guns, but can't be bothered to set up the matrix for that right now
 	timeUntilNextFire -= deltaTime;
 	if(firing && timeUntilNextFire <= 0.0f){
 		timeUntilNextFire = firingDelay;
-		float spawnX = x + cos(Util::deg2rad(angle)) * 48;
-		float spawnY = y + sin(Util::deg2rad(angle)) * 48;
+		float spawnX = x + cos(Util::deg2rad(angle)) * 25;
+		float spawnY = y + sin(Util::deg2rad(angle)) * 25;
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
+
+		shootSound.play();
 	}
 }
 
@@ -108,28 +108,25 @@ void Player::onCollide(GameObject* other) {
 void Player::render() {
 	setupTransformation();
 
+	glRotatef(roll, 1, 0, 0);
+
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-	glBegin(GL_QUADS);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		
-		glTexCoord2f(0, 0);
-		glVertex3f(0, 0, 2);
+	GLint originalProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+	glUseProgram(shader);
 
-		glTexCoord2f(1, 0);
-		glVertex3f(96, 0, 2);
+	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_TRUE);
+	glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f, 10.0f, 1.0f - health / 100.0f));
 
-		glTexCoord2f(1, 1);
-		glVertex3f(96, 96, 2);
-
-		glTexCoord2f(0, 1);
-		glVertex3f(0, 96, 2);
-	glEnd();
+	static OBJModel lol("models/tiefighter.obj");
+	lol.draw();
 
 	glDisable(GL_TEXTURE_2D);
+
+	glUseProgram(originalProgram);
 
 	resetTransformation();
 }
