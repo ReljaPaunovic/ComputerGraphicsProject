@@ -1,9 +1,28 @@
 #include "Camera.h"
 
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/matrix_transform.hpp>
+
 void Camera::setProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(x, x + width, y + height, y, -1000, 1000);
+	glOrtho(x, x + width, y + height, y, -1500, 1500);
+}
+
+const float cameraAngle = -45.0f;
+
+void Camera::setLightProjection() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glRotatef(cameraAngle, 1, 0, 0);
+	glOrtho(x, x + width, y + height, y, -1500, 1500);
+}
+
+glm::mat4 Camera::getLightProjection() {
+	glm::mat4 projection = glm::ortho(x, x + width, y + height, y, -1500.f, 1500.f);
+	glm::mat4 view = glm::rotate(glm::mat4(), glm::radians(cameraAngle), glm::vec3(1.f, 0.f, 0.f));
+
+	return view * projection;
 }
 
 void Camera::updatePosition(Player* player) {

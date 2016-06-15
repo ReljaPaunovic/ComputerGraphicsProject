@@ -22,6 +22,7 @@
 #include <random>
 #include <cmath>
 #include <algorithm>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "main.h"
 
@@ -43,6 +44,9 @@ GameObject* boss;
 
 Stopwatch frameTimer;
 Stopwatch gameTimer;
+
+// Shadow-mapping related
+Framebuffer shadowBuffer;
 
 // Post-processing related objects
 Framebuffer framebuffers[2];
@@ -118,6 +122,9 @@ void initDisplay() {
 	framebuffers[0] = Framebuffer(WIDTH, HEIGHT);
 	framebuffers[1] = Framebuffer(WIDTH, HEIGHT);
 
+	// should really be a power of 2, but for convenience we do this
+	shadowBuffer = Framebuffer(WIDTH, HEIGHT);
+
 	// Set up clear values
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -169,6 +176,14 @@ void enemySpawner(float deltatime){
 void display() {
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
+
+	// Draw game world from perspective of light
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowBuffer.fbo);
+	glUseProgram(0);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	drawGameObjects(deltaTime, true);
 	
 	// Draw game world to post-processing buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0].fbo);
@@ -179,7 +194,7 @@ void display() {
 	checkCollisions();
 	//enemySpawner(deltaTime);
 
-	drawGameObjects(deltaTime);
+	drawGameObjects(deltaTime, false);
 
 	// Render quad with first post-processing pass to second
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1].fbo);
@@ -261,10 +276,15 @@ void drawPostProcessing(float deltaTime, int pass) {
 	glDisable(GL_TEXTURE_2D);
 }
 
-void drawGameObjects(float deltaTime) {
+void drawGameObjects(float deltaTime, bool shadowRender) {
 	// Set up world projection
 	camera->updatePosition(player);
-	camera->setProjection();
+
+	if (shadowRender) {
+		camera->setLightProjection();
+	} else {
+		camera->setProjection();
+	}
 
 	// Draw background
 	glUseProgram(mountainShader);
@@ -273,14 +293,28 @@ void drawGameObjects(float deltaTime) {
 	glUniform1f(glGetUniformLocation(mountainShader, "screenHeight"), (float) HEIGHT);
 	glUniform1i(glGetUniformLocation(mountainShader, "texSnow"), 1);
 	glUniform1i(glGetUniformLocation(mountainShader, "texRockGrass"), 2);
+	glUniform1i(glGetUniformLocation(mountainShader, "texShadowMap"), 3);
+
+	auto lightProj = camera->getLightProjection();
+	glUniformMatrix4fv(glGetUniformLocation(mountainShader, "shadowMapProjection"), 1, GL_FALSE, glm::value_ptr(lightProj));
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, shadowBuffer.depthTexture);
+	glActiveTexture(GL_TEXTURE0);
+
 	background->render(camera->getX());
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+
 	glUseProgram(0);
 
 	// Copy is made such that game objects can remove themselves or spawn new game objects
 	std::vector<GameObject*> gameObjectsCopy = gameObjects;
 
 	for (GameObject* obj : gameObjectsCopy) {
-		obj->tick(deltaTime);
+		if (!shadowRender) obj->tick(deltaTime);
 		obj->render();
 	}
 }
@@ -315,6 +349,11 @@ void drawUI(float deltaTime) {
 
 	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth + 7, 16), glm::vec2(20.0f / 28.0f, 0), glm::vec2(21.0f / 28.0f, 16.0f / 16.0f));
 	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth * healthFraction + 7, 16), glm::vec2(7.0f / 28.0f, 0), glm::vec2(13.0f / 28.0f, 16.0f / 16.0f));
+
+	// Shadow map debugging
+	/*glLoadIdentity();
+	glBindTexture(GL_TEXTURE_2D, shadowBuffer.depthTexture);
+	Util::drawTexturedQuad(glm::vec2(WIDTH - 250, 250), glm::vec2(WIDTH - 50, 50), glm::vec2(0, 0), glm::vec2(1, 1));*/
 
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);

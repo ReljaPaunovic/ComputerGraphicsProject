@@ -14,6 +14,7 @@ void Background::renderMountains(float viewx) {
 	glScalef(WIDTH / 2, -1000, 500);
 	
 	glEnable(GL_TEXTURE_2D);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureRock);
 	glActiveTexture(GL_TEXTURE1);
@@ -22,6 +23,13 @@ void Background::renderMountains(float viewx) {
 	glBindTexture(GL_TEXTURE_2D, textureRockGrass);
 
 	plane.draw();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Background::renderSky() {

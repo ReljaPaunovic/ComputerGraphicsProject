@@ -1,5 +1,6 @@
 varying vec3 coordinates;
 varying vec3 normal;
+varying mat4 modelView;
 
 uniform float cameraX;
 
@@ -84,12 +85,15 @@ vec3 calculateNormal(vec2 noiseCoords) {
 }
 
 void main() {
-	vec2 noiseCoords = vec2(gl_Vertex.x + cameraX / screenWidth, gl_Vertex.z);
+    vec2 noiseCoords = vec2(gl_Vertex.x + cameraX / screenWidth, gl_Vertex.z);
     coordinates = transformPos(noiseCoords);
     coordinates.x -= cameraX / screenWidth;
 
-	normal = calculateNormal(noiseCoords);
+    normal = calculateNormal(noiseCoords);
 
-	gl_Position = gl_ModelViewProjectionMatrix * vec4(coordinates, 1.0);
-	gl_TexCoord[0] = vec4(gl_MultiTexCoord0.x + cameraX / (2.0 * screenWidth), gl_MultiTexCoord0.yzw);
+    gl_Position = gl_ModelViewProjectionMatrix * vec4(coordinates, 1.0);
+
+    modelView = gl_ModelViewMatrix;
+
+    gl_TexCoord[0] = vec4(gl_MultiTexCoord0.x + cameraX / (2.0 * screenWidth), gl_MultiTexCoord0.yzw);
 }
