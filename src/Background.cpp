@@ -40,16 +40,16 @@ void Background::renderSky() {
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
-	glVertex3f(0, 0, -900);
+	glVertex3i(0, 0, -900);
 
 	glTexCoord2f(1, 0);
-	glVertex3f(WIDTH, 0, -900);
+	glVertex3i(WIDTH, 0, -900);
 
 	glTexCoord2f(1, 1);
-	glVertex3f(WIDTH, HEIGHT, -900);
+	glVertex3i(WIDTH, HEIGHT, -900);
 
 	glTexCoord2f(0, 1);
-	glVertex3f(0, HEIGHT, -900);
+	glVertex3i(0, HEIGHT, -900);
 	glEnd();
 
 	glPopMatrix();

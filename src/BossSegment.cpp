@@ -7,7 +7,8 @@
 #include "AnimateObject.h"
 //#include "Boss.h"
 
-
+static GLint shader = -1;
+static GLint texture = -1;
 
 BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 {
@@ -24,8 +25,13 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 	segmentNum = i;
 	previousSegment = obj;
 
-	texture = Util::loadTexture("textures/scales.jpg");
-	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+	if (texture == -1) {
+		texture = Util::loadTexture("textures/scales.jpg");
+	}
+	
+	if (shader == -1) {
+		shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+	}
 	
 	if (obj != nullptr) {
 		speed = obj->speed;

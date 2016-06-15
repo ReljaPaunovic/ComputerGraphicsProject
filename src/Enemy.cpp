@@ -1,17 +1,18 @@
 #include "Enemy.h"
 #include <stdio.h>
 #include <GL/freeglut.h>
-#include <iostream>
 #include "Player.h"
-#define PI 3.14
 #include <cmath>
 #include <typeinfo>
 #include "main.h"
 #include <algorithm>
-#include "AnimateObject.h"
+#include <random>
 #include "Projectile.h"
 #include "OBJModel.h"
 #include "Util.h"
+
+static GLint shader = -1;
+static GLint texture = -1;
 
 Enemy::Enemy()
 {
@@ -26,9 +27,18 @@ Enemy::Enemy()
 	// this is to lower the chance bombs will overlap
 	z = (float) (10 + rand() % 100);
 
-	texture = Util::loadTexture("textures/minemat.png");
+	if (texture == -1) {
+		texture = Util::loadTexture("textures/minemat.png");
+	}
 
-	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+	if (shader == -1) {
+		shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+	}
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis;
+	spinRate = dis(gen);
 }
 
 
@@ -39,6 +49,9 @@ Enemy::~Enemy()
 void Enemy::render() {
 
 	setupTransformation();
+
+	glMatrixMode(GL_MODELVIEW);
+	glRotatef(spin, 1, 1, 1);
 
 	GLint originalProgram;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
@@ -56,7 +69,7 @@ void Enemy::render() {
 }
 
 void Enemy::tick(float deltaTime) {
-
+	spin += deltaTime * spinRate * 45.0f;
 }
 
 
@@ -78,9 +91,4 @@ void Enemy::onCollide(GameObject* other) {
 		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
-}
-
-void Enemy::animateDeath(){
-	AnimateObject * anObj = new AnimateObject(this->x, this->y, this->z);
-	gameObjects.push_back(anObj);
 }

@@ -1,5 +1,7 @@
 #include "GameObject.h"
 #include "Camera.h"
+#include "AnimateObject.h"
+#include "main.h"
 
 GameObject::GameObject()
 {
@@ -35,4 +37,9 @@ glm::vec2 GameObject::getScreenPos(Camera* camera) {
 	transform = glm::translate(transform, glm::vec3(-cx, -cy, 0.0f));
 
 	return glm::vec2(transform * pos);
+}
+
+void GameObject::animateDeath() {
+	AnimateObject* anObj = new AnimateObject(this->x, this->y, 0);
+	gameObjects.push_back(anObj);
 }
