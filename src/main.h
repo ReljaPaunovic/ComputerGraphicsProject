@@ -8,6 +8,8 @@
 const int WIDTH = 1280;
 const int HEIGHT = 720;
 
+const bool ENABLE_DEPTH_DEBUG = false;
+
 void drawGameObjects(float deltaTime, bool shadowRender);
 void drawUI(float deltaTime);
 void drawPostProcessing(float deltaTime, int pass);
