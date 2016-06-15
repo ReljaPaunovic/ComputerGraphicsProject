@@ -7,6 +7,9 @@
 #include "main.h"
 #include <algorithm>
 #include "OBJModel.h"
+#include "Boss.h"
+
+bool bossSpawned = false;
 
 Player::Player()
 {
@@ -109,6 +112,13 @@ void Player::tick(float deltaTime) {
 		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 600.0f));
 
 		shootSound.play();
+	}
+	//printf("x = %f \n", x);
+	if (x > 10000 && bossSpawned == false) {
+		bossSpawned = true;
+		printf("BOSS HAS SPAWNED\n");
+		boss = new Boss();
+		gameObjects.push_back(boss);
 	}
 }
 

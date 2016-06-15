@@ -40,7 +40,7 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 	}
 	else {
 		//SPEED IS HARDCODED TO BOSS
-		speed = 0;
+		speed = 4;
 	}
 	if (i == totalNumberOfSegments - 1)
 		nextSegment = nullptr;

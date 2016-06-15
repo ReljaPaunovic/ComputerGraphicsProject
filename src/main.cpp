@@ -132,7 +132,7 @@ void initDisplay() {
 
 int minx=0;
 int maxx=0;
-const double spawnFactor = 1000;
+const double spawnFactor = 5000;
 const double SpawnScaler = 1;
 const int spawnRangeMin = -400;
 const int spawnRangeMax = 1200;
@@ -177,7 +177,7 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-	//enemySpawner(deltaTime);
+	enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime);
 
@@ -386,8 +386,8 @@ int main(int argc, char** argv) {
 	background = new Background();
 
 
-	boss = new Boss();
-	gameObjects.push_back(boss);
+	//boss = new Boss();
+	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
 

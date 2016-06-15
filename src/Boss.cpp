@@ -14,9 +14,9 @@ Boss::~Boss()
 }
 
 void Boss::loadTextures() {
-	x = 1000;
-	y = 100;
-	speed = 0;
+	x = 10500;
+	y = 750;
+	speed = 4;
 	eyeTexture = Util::loadTexture("textures/hal.png");
 	rivetTexture = Util::loadTexture("textures/metal_rivets.jpg");
 }
@@ -131,6 +131,9 @@ void Boss::onCollide(GameObject* other) {
 			this->animateDeath();
 			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
 			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		}
+		else {
+			gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
 		}
 	}
 }
