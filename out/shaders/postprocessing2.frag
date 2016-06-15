@@ -34,7 +34,7 @@ void main() {
 
     // First process shockwave to get sampling coordinates
     vec2 coords = getShockwaveCoords(finalPos, dist);
-    vec3 baseColor = texture2D(tex, coords);
+    vec3 baseColor = texture2D(tex, coords).xyz;
 
     // Secondly process brightness from explosion
     vec3 explodeColor = baseColor * 5.0;
