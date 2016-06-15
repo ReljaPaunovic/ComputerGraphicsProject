@@ -117,8 +117,11 @@ void BossSegment::onCollide(GameObject * other)
 {
 	if (dynamic_cast<Player*>(other) != NULL) {
 		//if PLayer
+		((Boss*)boss)->currentNumSegments--;
 		other->animateDeath();
 		this->animateDeath();
+		if (nextSegment != nullptr)
+			this->nextSegment->onCollide(other);
 		((Player*)other)->setHealth(0);
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());

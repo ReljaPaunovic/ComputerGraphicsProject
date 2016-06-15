@@ -41,6 +41,7 @@ Camera* camera;
 Enemy* enemy;
 Background* background;
 GameObject* boss;
+bool gameOver = false;
 
 Stopwatch frameTimer;
 Stopwatch gameTimer;
@@ -78,6 +79,22 @@ void displayScore()
 		glScalef(stroke_scale, stroke_scale, stroke_scale);
 		print_stroke_string(
 			GLUT_STROKE_ROMAN, buffer );
+	}
+	glPopMatrix();
+}
+void displayGameOver() {
+
+	float stroke_scale = 0.2f;
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(2.0);
+	glPushMatrix(); {
+		glTranslatef(WIDTH / 4, HEIGHT / 4, 0.0);
+		glRotatef(180, 1, 0, 0);
+		glScalef(stroke_scale, stroke_scale, stroke_scale);
+		print_stroke_string(
+			GLUT_STROKE_ROMAN, "GAME OVER");
 	}
 	glPopMatrix();
 }
@@ -365,6 +382,8 @@ void drawUI(float deltaTime) {
 	glEnable(GL_DEPTH_TEST);
 
 	displayScore();
+	if (gameOver)
+		displayGameOver();
 }
 
 void setShader(int i) {

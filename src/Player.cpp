@@ -84,7 +84,10 @@ void Player::tick(float deltaTime) {
 	if (rotationRight) rollTarget += 15;
 
 	if (health <= 0) {
+		gameOver = true;
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		
+		
 	}
 	angle -= 180.0f * actualLeft * deltaTime;
 	angle += 180.0f * actualRight * deltaTime;
@@ -104,6 +107,7 @@ void Player::tick(float deltaTime) {
 	// Destroy if lower than lowerBoundary
 	if (-y < lowerBoundary) {
 		player->health = 0;
+		gameOver = true;
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 		animateDeath();
 	}

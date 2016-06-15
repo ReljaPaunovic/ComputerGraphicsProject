@@ -21,3 +21,5 @@ extern glm::vec2 explosionPos;
 
 extern float shockwaveRange;
 extern float shockwaveDistance;
+
+extern bool gameOver;
