@@ -29,6 +29,9 @@ Enemy::Enemy()
 	texture = Util::loadTexture("textures/minemat.png");
 
 	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+
+	srand(time(nullptr));
+	spinRate = rand() / (float) RAND_MAX;
 }
 
 
@@ -39,6 +42,9 @@ Enemy::~Enemy()
 void Enemy::render() {
 
 	setupTransformation();
+
+	glMatrixMode(GL_MODELVIEW);
+	glRotatef(spin, 1, 1, 1);
 
 	GLint originalProgram;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
@@ -56,7 +62,7 @@ void Enemy::render() {
 }
 
 void Enemy::tick(float deltaTime) {
-
+	spin += deltaTime * spinRate * 45.0f;
 }
 
 

@@ -23,6 +23,9 @@ private:
 	float z;
 	float health = 10;
 
+	float spin = 0.0f;
+	float spinRate;
+
 	OBJModel* model;
 	GLuint texture;
 	GLuint shader;
