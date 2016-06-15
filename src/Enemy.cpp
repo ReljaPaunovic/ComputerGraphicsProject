@@ -80,6 +80,7 @@ void Enemy::onCollide(GameObject* other) {
 		((Player*)other)->setHealth(((Player*)other)->getHealth() - this->getHealth());
 		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		((Player*)other)->killCount++;
 	}
 	//Check if it is other enemy
 	if (dynamic_cast<Enemy*>(other) != NULL) {
@@ -90,5 +91,6 @@ void Enemy::onCollide(GameObject* other) {
 	if (dynamic_cast<Projectile*>(other) != NULL) {
 		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		player->killCount++;
 	}
 }

@@ -33,6 +33,7 @@ public:
 	float getHealth() {
 		return health;
 	}
+	int killCount = 0;
 
 private:
 	float health = 100;

@@ -22,6 +22,7 @@
 #include <random>
 #include <cmath>
 #include <algorithm>
+#include <string>
 
 #include "main.h"
 
@@ -51,6 +52,35 @@ GLint playerPositionUniformLoc[2];
 GLint timeUniformLoc[2];
 
 GLint mountainShader;
+
+void print_stroke_string(void* font, char* s)
+{
+	if (s && strlen(s)) {
+		while (*s) {
+			glutStrokeCharacter(font, *s);
+			s++;
+		}
+	}
+}
+
+void displayScore()
+{
+	char buffer[50];
+	sprintf(buffer, "Score : %d", player->killCount);
+	float stroke_scale = 0.2f;
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(2.0);
+	glPushMatrix(); {
+		glTranslatef( WIDTH / 4, 20, 0.0);
+		glRotatef(180, 1,0,0);
+		glScalef(stroke_scale, stroke_scale, stroke_scale);
+		print_stroke_string(
+			GLUT_STROKE_ROMAN, buffer );
+	}
+	glPopMatrix();
+}
 
 double distanceCalculate(double x1, double y1, double x2, double y2)
 {
@@ -174,6 +204,7 @@ void display() {
 
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
+	
 	
 	// Draw game world to post-processing buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0].fbo);
@@ -312,11 +343,15 @@ void drawUI(float deltaTime) {
 	glTranslatef(30, 30, 0);
 	glScalef(2.5f, 2.5f, 1.0f);
 
+	
+
 	// Draw player health bar
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, healthBarTexture);
 
 	float healthWidth = 100.0f;
+
+	
 
 	Util::drawTexturedQuad(glm::vec2(0, 0), glm::vec2(7, 16), glm::vec2(0, 0), glm::vec2(7.0f/28.0f, 16.0f/16.0f));
 	Util::drawTexturedQuad(glm::vec2(healthWidth + 7, 0), glm::vec2(healthWidth + 14, 16), glm::vec2(13.0f/28.0f, 0), glm::vec2(20.0f / 28.0f, 16.0f / 16.0f));
@@ -328,6 +363,8 @@ void drawUI(float deltaTime) {
 
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
+
+	displayScore();
 }
 
 void setShader(int i) {
@@ -373,6 +410,9 @@ void keyboardUp(unsigned char key, int x, int y) {
 	}
 }
 
+
+
+
 int main(int argc, char** argv) {
 	// TODO: Only apply oil painting to terrain
 	// Initialize GLUT
@@ -396,7 +436,7 @@ int main(int argc, char** argv) {
 	background = new Background();
 
 
-	//boss = new Boss();
+	boss = new Boss();
 	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);

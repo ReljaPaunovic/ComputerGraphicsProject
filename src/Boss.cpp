@@ -14,7 +14,7 @@ Boss::~Boss()
 }
 
 void Boss::loadTextures() {
-	x = 10500;
+	x = 32000;
 	y = 750;
 	speed = 4;
 	eyeTexture = Util::loadTexture("textures/hal.png");
