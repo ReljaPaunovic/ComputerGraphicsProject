@@ -351,9 +351,9 @@ void drawUI(float deltaTime) {
 	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth * healthFraction + 7, 16), glm::vec2(7.0f / 28.0f, 0), glm::vec2(13.0f / 28.0f, 16.0f / 16.0f));
 
 	// Shadow map debugging
-	/*glLoadIdentity();
+	glLoadIdentity();
 	glBindTexture(GL_TEXTURE_2D, shadowBuffer.depthTexture);
-	Util::drawTexturedQuad(glm::vec2(WIDTH - 250, 250), glm::vec2(WIDTH - 50, 50), glm::vec2(0, 0), glm::vec2(1, 1));*/
+	Util::drawTexturedQuad(glm::vec2(WIDTH - 250, 250), glm::vec2(WIDTH - 50, 50), glm::vec2(0, 0), glm::vec2(1, 1));
 
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);

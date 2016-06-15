@@ -19,16 +19,20 @@ void main() {
     shadowCoords.y = shadowCoords.y / 2.0 + 0.5;
     shadowCoords.z = shadowCoords.z / shadowCoords.w;
 
-    // Get depth of shadow at position and map to [-1, 1] range
-    float shadowDepth = texture(texShadowMap, shadowCoords.xy).r;
-    shadowDepth = (shadowDepth - 0.5) * 2.0;
-
+    // No shadow if the fragment is not in view of the light
     float shadowFactor;
-
-    if (shadowCoords.z > shadowDepth + shadowBias) {
-        shadowFactor = ambientLight;
-    } else {
+    if (shadowCoords.x < 0 || shadowCoords.x > 1 || shadowCoords.y < 0 || shadowCoords.y > 1) {
         shadowFactor = 1.0;
+    } else {
+        // Get depth of shadow at position and map to [-1, 1] range
+        float shadowDepth = texture(texShadowMap, shadowCoords.xy).r;
+        shadowDepth = (shadowDepth - 0.5) * 2.0;
+
+        if (shadowCoords.z > shadowDepth + shadowBias) {
+            shadowFactor = ambientLight;
+        } else {
+            shadowFactor = 1.0;
+        }
     }
 
     // Determine texture and diffuse lighting
