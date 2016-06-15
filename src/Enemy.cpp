@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include <stdio.h>
 #include <GL/freeglut.h>
+#include <iostream>
 #include "Player.h"
 #define PI 3.14
 #include <cmath>
@@ -9,10 +10,11 @@
 #include <algorithm>
 #include "AnimateObject.h"
 #include "Projectile.h"
-
+#include "OBJModel.h"
 
 Enemy::Enemy()
 {
+
 	x = 400;
 	y = 150;
 	cx = 48;
@@ -26,7 +28,7 @@ Enemy::Enemy()
 
 	int textureWidth, textureHeight;
 	int textureComponents;
-	stbi_uc* pixels = stbi_load("textures/mine.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load("textures/minemat.png", &textureWidth, &textureHeight, &textureComponents, STBI_rgb_alpha);
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -53,29 +55,32 @@ void Enemy::render() {
 
 	setupTransformation();
 
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glMatrixMode(GL_MODELVIEW);
+	glScalef(100, 100, 100);
+
+	GLfloat mat_specular[] = {10.0, 10.0, 10.0, 1.0};
+	GLfloat mat_shininess[] = {50.0};
+	GLfloat light_position[] = {this->x, this->y - 200, -50.0, 0.0};
+	glTranslatef(this->x, this->y, 2);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	//glEnable(GL_LIGHTING);
+//	glEnable(GL_LIGHT0);
+	//glEnable(GL_TEXTURE_2D);
+
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glBegin(GL_QUADS);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		
-		glTexCoord2f(0, 0);
-		glVertex3f(0, 0, z);
+	if(model!=NULL)
+	model->draw();
+	else
+		std::cout<<("arg")<<std::endl;
 
-		glTexCoord2f(1, 0);
-		glVertex3f(96, 0, z);
-
-		glTexCoord2f(1, 1);
-		glVertex3f(96, 96, z);
-
-		glTexCoord2f(0, 1);
-		glVertex3f(0, 96, z);
-	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
 
-	resetTransformation();
+	glDisable(GL_LIGHTING);
 
 }
 
