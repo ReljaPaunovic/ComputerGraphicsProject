@@ -20,6 +20,8 @@ public:
 	void setupTransformation();
 	void resetTransformation();
 
+	void animateDeath();
+
 	glm::vec2 getScreenPos(Camera* camera);
 
 	float x = 0, y = 0;

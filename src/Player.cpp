@@ -96,6 +96,7 @@ void Player::tick(float deltaTime) {
 	// Destroy if lower than lowerBoundary
 	if (-y < lowerBoundary) {
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		animateDeath();
 	}
 
 	// Should fire from two guns, but can't be bothered to set up the matrix for that right now

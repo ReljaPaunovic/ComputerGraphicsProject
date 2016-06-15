@@ -1,14 +1,12 @@
 #include "Enemy.h"
 #include <stdio.h>
 #include <GL/freeglut.h>
-#include <iostream>
 #include "Player.h"
-#define PI 3.14
 #include <cmath>
 #include <typeinfo>
 #include "main.h"
 #include <algorithm>
-#include "AnimateObject.h"
+#include <random>
 #include "Projectile.h"
 #include "OBJModel.h"
 #include "Util.h"
@@ -37,8 +35,10 @@ Enemy::Enemy()
 		shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
 	}
 
-	srand(time(nullptr));
-	spinRate = rand() / (float) RAND_MAX;
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis;
+	spinRate = dis(gen);
 }
 
 
@@ -91,9 +91,4 @@ void Enemy::onCollide(GameObject* other) {
 		this->animateDeath();
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
-}
-
-void Enemy::animateDeath(){
-	AnimateObject * anObj = new AnimateObject(this->x, this->y, this->z);
-	gameObjects.push_back(anObj);
 }
