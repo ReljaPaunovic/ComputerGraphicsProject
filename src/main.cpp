@@ -93,7 +93,6 @@ void checkCollision(GameObject* obj1, GameObject* obj2) {
 			if (x <= (obj2->collider->width / 2) || y <= (obj2->collider->height / 2)) {
 				obj1->onCollide(obj2);
 				obj2->onCollide(obj1);
-
 			}
 		}
 	}
@@ -142,14 +141,15 @@ const int spawnRangeMin = -400;
 const int spawnRangeMax = 1200;
 std::default_random_engine generator;
 std::exponential_distribution<double> distribution(SpawnScaler);
-OBJModel* mine = new OBJModel("models/main.obj");
+//OBJModel* mine = new OBJModel("models/main.obj");
+
 void enemySpawner(float deltatime){
 
 	int x = (int)camera->getX();
 	if(x > maxx || x < minx ){
 		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
 			enemy = new Enemy();
-			enemy->model=mine;
+			//enemy->model = mine;
 
 			enemy->y=(float) ((rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin);
 			gameObjects.push_back(enemy);
@@ -384,8 +384,8 @@ int main(int argc, char** argv) {
 	background = new Background();
 
 
-	//boss = new Boss();
-	//gameObjects.push_back(boss);
+	boss = new Boss();
+	gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
 

@@ -75,7 +75,7 @@ void Enemy::render() {
 
 	glBindTexture(GL_TEXTURE_2D, texture);
 	if(model!=NULL)
-	model->draw();
+		model->draw();
 	else
 		std::cout<<("arg")<<std::endl;
 

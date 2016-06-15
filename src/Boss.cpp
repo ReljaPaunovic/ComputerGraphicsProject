@@ -96,6 +96,4 @@ void Boss::render() {
 
 void Boss::onCollide(GameObject* other) {
 
-
-	return tex;
 }
