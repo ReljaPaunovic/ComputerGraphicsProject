@@ -25,9 +25,5 @@ private:
 
 	float spin = 0.0f;
 	float spinRate;
-
-	OBJModel* model;
-	GLuint texture;
-	GLuint shader;
 };
 

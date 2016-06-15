@@ -13,6 +13,9 @@
 #include "OBJModel.h"
 #include "Util.h"
 
+static GLint shader = -1;
+static GLint texture = -1;
+
 Enemy::Enemy()
 {
 
@@ -26,9 +29,13 @@ Enemy::Enemy()
 	// this is to lower the chance bombs will overlap
 	z = (float) (10 + rand() % 100);
 
-	texture = Util::loadTexture("textures/minemat.png");
+	if (texture == -1) {
+		texture = Util::loadTexture("textures/minemat.png");
+	}
 
-	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+	if (shader == -1) {
+		shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+	}
 
 	srand(time(nullptr));
 	spinRate = rand() / (float) RAND_MAX;

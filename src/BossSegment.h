@@ -20,9 +20,6 @@ private:
 
 	float speed;
 
-	GLuint texture;
-	GLuint shader;
-
 	float size;
 	
 };
