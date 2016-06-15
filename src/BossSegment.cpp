@@ -1,6 +1,8 @@
 #include "BossSegment.h"
 #include <GL/glut.h>
 #include "main.h"
+#include "OBJModel.h"
+#include "Util.h"
 
 
 
@@ -15,6 +17,10 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 	//printf("(x,y,i) = (%f, %f, %d) \n", this->x, this->y, i);
 	segmentNum = i;
 	previousSegment = obj;
+
+	texture = Util::loadTexture("textures/scales.jpg");
+	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
+
 }
 
 BossSegment::~BossSegment()
@@ -59,13 +65,28 @@ void BossSegment::render()
 {
 	setupTransformation();
 	glMatrixMode(GL_MODELVIEW);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	//glRotatef(30, 0, 0, 1);
-	//glTranslatef(2 * 2, 0, 0);
+
+	//glColor3f(0.0f, 1.0f, 0.0f);
 	
 	glScalef(size/2, size/2, size/2);
-	//glTranslatef(2 * 2 * segmentNum, 0, 0);
-	glutSolidSphere(2.0f, 50, 50);
+
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	GLint originalProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+	glUseProgram(shader);
+
+	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_FALSE);
+	//glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f, 10.0f, 1.0f - health / 100.0f));
+	
+	static OBJModel lol("models/snake_segment.obj");
+	lol.draw();
+
+	glDisable(GL_TEXTURE_2D);
+	
+	glUseProgram(originalProgram);
 
 	resetTransformation();
 }

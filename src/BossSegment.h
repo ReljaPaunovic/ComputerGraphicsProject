@@ -18,6 +18,8 @@ private:
 	float xDirection;
 	float yDirection;
 
+	GLuint texture;
+	GLuint shader;
 
 	float size;
 	
