@@ -187,8 +187,8 @@ void display() {
 
 	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraX"), camera->getX());
 	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraY"), camera->getY());
-	glUniform1f(glGetUniformLocation(ppShaders[0], "screenWidth"), WIDTH);
-	glUniform1f(glGetUniformLocation(ppShaders[0], "screenHeight"), HEIGHT);
+	glUniform1f(glGetUniformLocation(ppShaders[0], "screenWidth"), (float) WIDTH);
+	glUniform1f(glGetUniformLocation(ppShaders[0], "screenHeight"), (float) HEIGHT);
 
 	if (playerPositionUniformLoc[0] != -1) {
 		glUniform2f(playerPositionUniformLoc[0], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
@@ -205,8 +205,8 @@ void display() {
 
 	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraX"), camera->getX());
 	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraY"), camera->getY());
-	glUniform1f(glGetUniformLocation(ppShaders[1], "screenWidth"), WIDTH);
-	glUniform1f(glGetUniformLocation(ppShaders[1], "screenHeight"), HEIGHT);
+	glUniform1f(glGetUniformLocation(ppShaders[1], "screenWidth"), (float) WIDTH);
+	glUniform1f(glGetUniformLocation(ppShaders[1], "screenHeight"), (float) HEIGHT);
 
 	glUniform1f(glGetUniformLocation(ppShaders[1], "explosionRange"), explosionRange);
 	glUniform2f(glGetUniformLocation(ppShaders[1], "explosionPos"), explosionPos.x, explosionPos.y);
@@ -269,8 +269,8 @@ void drawGameObjects(float deltaTime) {
 	// Draw background
 	glUseProgram(mountainShader);
 	glUniform1f(glGetUniformLocation(mountainShader, "cameraX"), camera->getX());
-	glUniform1f(glGetUniformLocation(mountainShader, "screenWidth"), WIDTH);
-	glUniform1f(glGetUniformLocation(mountainShader, "screenHeight"), HEIGHT);
+	glUniform1f(glGetUniformLocation(mountainShader, "screenWidth"), (float) WIDTH);
+	glUniform1f(glGetUniformLocation(mountainShader, "screenHeight"), (float) HEIGHT);
 	glUniform1i(glGetUniformLocation(mountainShader, "texSnow"), 1);
 	glUniform1i(glGetUniformLocation(mountainShader, "texRockGrass"), 2);
 	background->render(camera->getX());
