@@ -5,14 +5,15 @@
 #include "Util.h"
 #include "Projectile.h"
 #include "AnimateObject.h"
-//#include "Boss.h"
+#include "main.h"
+#include "Boss.h"
 
 static GLint shader = -1;
 static GLint texture = -1;
 
 BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 {
-	collider = new Collider(20);
+	collider = new Collider(60);
 	size = 40;
 
 	//Hard coded value, should be the same as Boss->numSegments ,  make sure it is
@@ -39,7 +40,7 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 	}
 	else {
 		//SPEED IS HARDCODED TO BOSS
-		speed = 2;
+		speed = 0;
 	}
 	if (i == totalNumberOfSegments - 1)
 		nextSegment = nullptr;
@@ -116,12 +117,24 @@ void BossSegment::onCollide(GameObject * other)
 {
 	if (dynamic_cast<Player*>(other) != NULL) {
 		//if PLayer
+		other->animateDeath();
+		this->animateDeath();
+		((Player*)other)->setHealth(0);
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
 	}
 	if (dynamic_cast<Projectile*>(other) != NULL) {
 		//if projectile
+		((Boss*)boss)->currentNumSegments--;
+		if (previousSegment != nullptr)
+			previousSegment->nextSegment = nullptr;
+		else {
+			((Boss*)boss)->setTail(nullptr);
+		}
 		if(nextSegment != nullptr)
 			this->nextSegment->onCollide(other);
 		this->animateDeath();
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), other), gameObjects.end());
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
 	}
 }
