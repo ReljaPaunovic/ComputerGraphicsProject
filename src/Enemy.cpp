@@ -11,6 +11,8 @@
 #include "AnimateObject.h"
 #include "Projectile.h"
 #include "OBJModel.h"
+#include "Util.h"
+
 
 Enemy::Enemy()
 {
@@ -24,7 +26,7 @@ Enemy::Enemy()
 	
 	// this is to lower the chance bombs will overlap
 	z = (float) (10 + rand() % 100);
-	
+
 
 	int textureWidth, textureHeight;
 	int textureComponents;

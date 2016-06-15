@@ -28,15 +28,21 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-
 const int WIDTH = 800;
 const int HEIGHT = 600;
+
+float explosionRange = 0.0f;
+glm::vec2 explosionPos;
+
+float shockwaveRange = 0.0f;
+float shockwaveDistance = 0.0f;
 
 std::vector<GameObject*> gameObjects;
 Player* player;
 Camera* camera;
 Enemy* enemy;
 Background* background;
+GameObject* boss;
 
 Stopwatch frameTimer;
 Stopwatch gameTimer;
@@ -109,44 +115,6 @@ void checkCollisions() {
 	std::cerr << "OpenGL: " << message << std::endl;
 }*/
 
-GLuint createShaderProgram(const std::string& vertexShaderFile, const std::string& fragShaderFile) {
-	std::string vertexShaderSrc = Util::readFile(vertexShaderFile);
-	std::string fragShaderSrc = Util::readFile(fragShaderFile);
-	const char* vertexShaderSrcPtr = vertexShaderSrc.c_str();
-	const char* fragShaderSrcPtr = fragShaderSrc.c_str();
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSrcPtr, nullptr);
-	glCompileShader(vertexShader);
-
-	char buffer[512];
-	glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
-
-	std::cerr << "vertex shader (" << vertexShaderFile << "):" << std::endl;
-	std::cerr << buffer << std::endl;
-
-	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShader, 1, &fragShaderSrcPtr, nullptr);
-	glCompileShader(fragShader);
-
-	glGetShaderInfoLog(fragShader, 512, NULL, buffer);
-
-	std::cerr << "fragment shader (" << fragShaderFile << "):" << std::endl;
-	std::cerr << buffer << std::endl;
-
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, fragShader);
-	glAttachShader(shaderProgram, vertexShader);
-	glLinkProgram(shaderProgram);
-
-	glGetProgramInfoLog(shaderProgram, 512, nullptr, buffer);
-
-	std::cerr << "link log:" << std::endl;
-	std::cerr << buffer << std::endl;
-
-	return shaderProgram;
-}
-
 void initDisplay() {
 //	glEnable(GL_DEBUG_OUTPUT);
 //	glDebugMessageCallback(debugCallback, nullptr);
@@ -163,9 +131,7 @@ void initDisplay() {
 
 	setShader(0);
 
-	mountainShader = createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
-
-	setShader(1);
+	mountainShader = Util::createShaderProgram("shaders/mountain.vert", "shaders/mountain.frag");
 }
 
 int minx=0;
@@ -215,13 +181,16 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	checkCollisions();
-	enemySpawner(deltaTime);
+	//enemySpawner(deltaTime);
 
 	drawGameObjects(deltaTime);
 
 	// Render quad with first post-processing pass to second
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1].fbo);
 	glUseProgram(ppShaders[0]);
+
+	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraX"), camera->getX());
+	glUniform1f(glGetUniformLocation(ppShaders[0], "cameraY"), camera->getY());
 
 	if (playerPositionUniformLoc[0] != -1) {
 		glUniform2f(playerPositionUniformLoc[0], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
@@ -235,6 +204,14 @@ void display() {
 	// Render scene with second post-processing pass
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(ppShaders[1]);
+
+	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraX"), camera->getX());
+	glUniform1f(glGetUniformLocation(ppShaders[1], "cameraY"), camera->getY());
+
+	glUniform1f(glGetUniformLocation(ppShaders[1], "explosionRange"), explosionRange);
+	glUniform2f(glGetUniformLocation(ppShaders[1], "explosionPos"), explosionPos.x, explosionPos.y);
+	glUniform1f(glGetUniformLocation(ppShaders[1], "shockwaveRange"), shockwaveRange);
+	glUniform1f(glGetUniformLocation(ppShaders[1], "shockwaveDistance"), shockwaveDistance);
 
 	if (playerPositionUniformLoc[1] != -1) {
 		glUniform2f(playerPositionUniformLoc[1], player->getScreenPos(camera).x, player->getScreenPos(camera).y);
@@ -290,7 +267,10 @@ void drawGameObjects(float deltaTime) {
 	camera->setProjection();
 
 	// Draw background
-//	glUseProgram(mountainShader);
+	glUseProgram(mountainShader);
+	glUniform1f(glGetUniformLocation(mountainShader, "cameraX"), camera->getX());
+	glUniform1i(glGetUniformLocation(mountainShader, "texSnow"), 1);
+	glUniform1i(glGetUniformLocation(mountainShader, "texRockGrass"), 2);
 	background->render(camera->getX());
 	glUseProgram(0);
 
@@ -304,8 +284,11 @@ void drawGameObjects(float deltaTime) {
 }
 
 void drawUI(float deltaTime) {
+	static GLuint healthBarTexture = Util::loadTexture("textures/healthbar.png", true);
+	
 	// Draw over everything
 	glClear(GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
 
 	// Set up projection to map directly to pixel coordinates
 	glMatrixMode(GL_PROJECTION);
@@ -315,39 +298,39 @@ void drawUI(float deltaTime) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(30, 30, 0);
-	glScalef(2, 30, 0);
+	glScalef(2.5f, 2.5f, 1.0f);
 
 	// Draw player health bar
-	glBegin(GL_LINE_STRIP);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex2f(0, 0);
-		glVertex2f(100, 0);
-		glVertex2f(100, 1);
-		glVertex2f(0, 1);
-		glVertex2f(0, 0);
-	glEnd();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, healthBarTexture);
 
-	glBegin(GL_QUADS);
-		glVertex2f(0, 0);
-		glVertex2f(std::max(player->getHealth(),0.0f), 0);
-		glVertex2f(std::max(player->getHealth(),0.0f), 1);
-		glVertex2f(0, 1);
-	glEnd();
+	float healthWidth = 100.0f;
+
+	Util::drawTexturedQuad(glm::vec2(0, 0), glm::vec2(7, 16), glm::vec2(0, 0), glm::vec2(7.0f/28.0f, 16.0f/16.0f));
+	Util::drawTexturedQuad(glm::vec2(healthWidth + 7, 0), glm::vec2(healthWidth + 14, 16), glm::vec2(13.0f/28.0f, 0), glm::vec2(20.0f / 28.0f, 16.0f / 16.0f));
+
+	float healthFraction = std::min(1.0f, std::max(player->getHealth() / 100.0f, 0.0f));
+
+	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth + 7, 16), glm::vec2(20.0f / 28.0f, 0), glm::vec2(21.0f / 28.0f, 16.0f / 16.0f));
+	Util::drawTexturedQuad(glm::vec2(7, 0), glm::vec2(healthWidth * healthFraction + 7, 16), glm::vec2(7.0f / 28.0f, 0), glm::vec2(13.0f / 28.0f, 16.0f / 16.0f));
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void setShader(int i) {
 	if (i == 0) {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/postprocessing.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/postprocessing.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 	} else if (i == 1) {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/oilpainting.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/oilpainting.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 	} else if (i == 2) {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/headvission.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/headvission.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 	} else {
-		ppShaders[0] = createShaderProgram("shaders/postprocessing.vert", "shaders/HandDrawn.frag");
-		ppShaders[1] = createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
+		ppShaders[0] = Util::createShaderProgram("shaders/postprocessing.vert", "shaders/HandDrawn.frag");
+		ppShaders[1] = Util::createShaderProgram("shaders/postprocessing2.vert", "shaders/postprocessing2.frag");
 
 	}
 
@@ -391,16 +374,21 @@ int main(int argc, char** argv) {
 	glutKeyboardUpFunc(keyboardUp);
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 
+	// Set up rendering
+	glewInit();
+	initDisplay();
+
 	// Initialize game world
 	player = new Player();
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
 
 
-	Boss* boss = new Boss();
-	gameObjects.push_back(boss);
+	//boss = new Boss();
+	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
+
 
 	// Set up rendering
 	glewInit();

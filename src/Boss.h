@@ -2,6 +2,8 @@
 
 #include "Enemy.h"
 #include "OBJModel.h"
+#include "main.h"
+#include "BossSegment.h"
 
 class Boss :
 	public GameObject
@@ -12,8 +14,15 @@ public:
 		modelEye("models/eye.obj") {
 
 		collider = nullptr;
-
+		numSegments = 32;
 		loadTextures();
+
+		BossSegment* previous = nullptr;
+		for (int i = 0; i < numSegments; i++) {
+			BossSegment * bs = new BossSegment(previous, this->x, this->y, i);
+			gameObjects.push_back(bs);
+			previous = bs;
+		}
 	}
 
 	~Boss();
@@ -31,6 +40,11 @@ private:
 	GLuint eyeTexture;
 	GLuint rivetTexture;
 
-	GLuint loadTexture(const std::string& filename);
+	float xDirection;
+	float yDirection;
+
+	float speed;
+
+	int  numSegments;
 };
 

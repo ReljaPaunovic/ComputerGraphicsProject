@@ -14,6 +14,7 @@
     <ClCompile Include="..\..\src\AnimateObject.cpp" />
     <ClCompile Include="..\..\src\Background.cpp" />
     <ClCompile Include="..\..\src\Boss.cpp" />
+    <ClCompile Include="..\..\src\BossSegment.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\ColliderClass.cpp" />
     <ClCompile Include="..\..\src\Enemy.cpp" />
@@ -41,7 +42,7 @@
     <ClInclude Include="..\..\src\Projectile.h" />
     <ClInclude Include="..\..\src\Stopwatch.h" />
     <ClInclude Include="..\..\src\Util.h" />
-    <ClInclude Include="BossSegment.h" />
+    <ClInclude Include="..\..\src\BossSegment.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{12FA565B-5765-4586-B79A-3666B92A5BF7}</ProjectGuid>
@@ -88,13 +89,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glm;$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glm;$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;$(ProjectDir)\..\..\third-party\sfml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\third-party\glew-1.13.0\lib\Release\Win32;$(ProjectDir)\..\..\third-party\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\third-party\glew-1.13.0\lib\Release\Win32;$(ProjectDir)\..\..\third-party\freeglut\lib;$(ProjectDir)\..\..\third-party\sfml\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;opengl32.lib;glew32s.lib;sfml-audio-s-d.lib;openal32.lib;sfml-system-s-d.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,15 +107,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glm;$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\third-party\glm;$(ProjectDir)\..\..\third-party\glew-1.13.0\include;$(ProjectDir)\..\..\third-party\freeglut\include;$(ProjectDir)\..\..\third-party\stb;$(ProjectDir)\..\..\third-party\sfml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\third-party\glew-1.13.0\lib\Release\Win32;$(ProjectDir)\..\..\third-party\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\third-party\glew-1.13.0\lib\Release\Win32;$(ProjectDir)\..\..\third-party\freeglut\lib;$(ProjectDir)\..\..\third-party\sfml\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;opengl32.lib;glew32s.lib;sfml-audio-s.lib;openal32.lib;sfml-system-s.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
