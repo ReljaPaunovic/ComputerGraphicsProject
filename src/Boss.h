@@ -12,11 +12,11 @@ public:
 	Boss() :
 		modelHead("models/head.obj"),
 		modelEye("models/eye.obj") {
-
+		velocity = 400;
 		collider = nullptr;
 		numSegments = 32;
 		loadTextures();
-
+		firstTime = true;
 		BossSegment* previous = nullptr;
 		for (int i = 0; i < numSegments; i++) {
 			BossSegment * bs = new BossSegment(previous, this->x, this->y, i);
@@ -46,7 +46,12 @@ private:
 	float yDirection;
 
 	float speed;
+	float velocity;
 
 	int  numSegments;
+	bool firstTime;
+
+	float previousX;
+	float previousY;
 };
 

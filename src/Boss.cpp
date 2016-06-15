@@ -4,6 +4,7 @@
 #include "main.h"
 #include <cmath>
 #include "BossSegment.h"
+#include "Util.h"
 
 Boss::~Boss()
 {
@@ -19,15 +20,37 @@ void Boss::loadTextures() {
 
 
 void Boss::tick(float deltaTime) {
-	xDirection = player->x - x;
-	yDirection = player->y - y;
 
-	float normalizationFactor = sqrt(xDirection*xDirection + yDirection*yDirection);
-	xDirection /= normalizationFactor;
-	yDirection /= normalizationFactor;
+	if (firstTime) {
+		xDirection = player->x - x;
+		yDirection = player->y - y;
 
-	x += xDirection * speed;
-	y += yDirection * speed;
+		float normalizationFactor = sqrt(xDirection*xDirection + yDirection*yDirection);
+		xDirection /= normalizationFactor;
+		yDirection /= normalizationFactor;
+
+		x += xDirection * speed;
+		y += yDirection * speed;
+	}
+	else {
+		float x1 = player->x;
+		float x2 = previousX;
+
+		float y1 = player->y;
+		float y2 = previousY;
+
+
+		float dot = x1*x2 + y1*y2;
+		float det = x1*y2 - y1*x2;
+		angle = atan2(det, dot);
+
+		x += cos(Util::deg2rad(angle)) * velocity * deltaTime;
+		y += sin(Util::deg2rad(angle)) * velocity * deltaTime;
+
+		firstTime = false;
+		previousX = player->x;
+		previousY = player->y;
+	}
 }
 
 void Boss::render() {
@@ -52,10 +75,9 @@ void Boss::render() {
 	glBindTexture(GL_TEXTURE_2D, rivetTexture);
 
 	modelHead.draw();
-	
 
 	glBindTexture(GL_TEXTURE_2D, eyeTexture);
-	
+
 	glTranslatef(0, 0, 2);
 
 	modelEye.draw();

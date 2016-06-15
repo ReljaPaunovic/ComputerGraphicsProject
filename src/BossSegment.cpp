@@ -57,11 +57,12 @@ void BossSegment::tick(float deltaTime)
 
 void BossSegment::render()
 {
+	setupTransformation();
 	glMatrixMode(GL_MODELVIEW);
 	glColor3f(0.0f, 1.0f, 0.0f);
 	//glRotatef(30, 0, 0, 1);
 	//glTranslatef(2 * 2, 0, 0);
-	setupTransformation();
+	
 	glScalef(size/2, size/2, size/2);
 	//glTranslatef(2 * 2 * segmentNum, 0, 0);
 	glutSolidSphere(2.0f, 50, 50);
