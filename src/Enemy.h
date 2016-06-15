@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "OBJModel.h"
 class Enemy :
 	public GameObject
 {
@@ -18,10 +19,12 @@ public:
 		return health;
 	}
 	void animateDeath();
-
+	OBJModel* model;
+	GLuint texture;
 private:
 	float z;
 	float health = 10;
-	GLuint texture;
+
+
 };
 

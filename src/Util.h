@@ -107,4 +107,8 @@ namespace Util {
 
 		return shaderProgram;
 	}
+
+	inline float lerp(float from, float to, float a) {
+		return from + (to - from) * a;
+	}
 }

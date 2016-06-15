@@ -142,13 +142,15 @@ const int spawnRangeMin = -400;
 const int spawnRangeMax = 1200;
 std::default_random_engine generator;
 std::exponential_distribution<double> distribution(SpawnScaler);
-
+OBJModel* mine = new OBJModel("models/main.obj");
 void enemySpawner(float deltatime){
 
 	int x = (int)camera->getX();
 	if(x > maxx || x < minx ){
 		if((maxx-minx)>distribution(generator)/deltatime*spawnFactor){
 			enemy = new Enemy();
+			enemy->model=mine;
+
 			enemy->y=(float) ((rand()%(spawnRangeMax-spawnRangeMin))+spawnRangeMin);
 			gameObjects.push_back(enemy);
 
@@ -380,13 +382,18 @@ int main(int argc, char** argv) {
 	player = new Player();
 	camera = new Camera(WIDTH, HEIGHT);
 	background = new Background();
-	enemy = new Enemy();
+
 
 	//boss = new Boss();
 	//gameObjects.push_back(boss);
 	background = new Background();
 	gameObjects.push_back(player);
-	gameObjects.push_back(enemy);
+
+
+	// Set up rendering
+	glewInit();
+	initDisplay();
+	//load enenemy
 
 	// Start game
 	glutMainLoop();
