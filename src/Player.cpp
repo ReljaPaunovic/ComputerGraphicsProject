@@ -16,6 +16,7 @@ Player::Player()
 	cy = 15;
 	collider = new Collider(35);
 	velocity = 800;
+	//velocity = 0;
 
 	texture = Util::loadTexture("textures/metal_plate.jpg");
 
@@ -95,7 +96,7 @@ void Player::tick(float deltaTime) {
 		timeUntilNextFire = firingDelay;
 		float spawnX = x + cos(Util::deg2rad(angle)) * 25;
 		float spawnY = y + sin(Util::deg2rad(angle)) * 25;
-		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 100.0f));
+		gameObjects.push_back(new Projectile(spawnX, spawnY, angle, velocity + 600.0f));
 
 		shootSound.play();
 	}

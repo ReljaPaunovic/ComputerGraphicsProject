@@ -14,7 +14,7 @@ public:
 		modelEye("models/eye.obj") {
 		velocity = 1600;
 		collider = nullptr;
-		numSegments = 32;
+		numSegments = 16;
 		loadTextures();
 		firstTime = true;
 		BossSegment* previous = nullptr;

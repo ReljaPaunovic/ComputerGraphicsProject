@@ -3,14 +3,19 @@
 #include "main.h"
 #include "OBJModel.h"
 #include "Util.h"
+#include "Projectile.h"
+#include "AnimateObject.h"
 //#include "Boss.h"
 
 
 
 BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 {
-	collider = nullptr;
+	collider = new Collider(20);
 	size = 40;
+
+	//Hard coded value, should be the same as Boss->numSegments ,  make sure it is
+	int totalNumberOfSegments = 16;
 
 	this->x = x + 2*size * (i+1);
 	this->y = y;
@@ -22,11 +27,16 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 	texture = Util::loadTexture("textures/scales.jpg");
 	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
 	
-	if (obj != nullptr)
+	if (obj != nullptr) {
 		speed = obj->speed;
-	else {
-		speed = 5;
+		obj->nextSegment = this;
 	}
+	else {
+		//SPEED IS HARDCODED TO BOSS
+		speed = 2;
+	}
+	if (i == totalNumberOfSegments - 1)
+		nextSegment = nullptr;
 }
 
 BossSegment::~BossSegment()
@@ -98,4 +108,20 @@ void BossSegment::render()
 
 void BossSegment::onCollide(GameObject * other)
 {
+	if (dynamic_cast<Player*>(other) != NULL) {
+		//if PLayer
+	}
+	if (dynamic_cast<Projectile*>(other) != NULL) {
+		//if projectile
+		if(nextSegment != nullptr)
+			this->nextSegment->onCollide(other);
+		this->animateDeath();
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), this), gameObjects.end());
+	}
+}
+
+void BossSegment::animateDeath()
+{
+	AnimateObject * anObj = new AnimateObject(this->x, this->y, 0);
+	gameObjects.push_back(anObj);
 }

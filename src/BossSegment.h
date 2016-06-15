@@ -11,9 +11,12 @@ public:
 	void tick(float deltaTime);
 	void render();
 	void onCollide(GameObject* other);
+	void animateDeath();
 
 private:
 	BossSegment* previousSegment;
+	BossSegment* nextSegment;
+
 	int segmentNum;
 	float xDirection;
 	float yDirection;
