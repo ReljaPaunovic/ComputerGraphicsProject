@@ -6,7 +6,7 @@
 void Camera::setProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(x, x + width, y + height, y, -1500, 1500);
+	glOrtho(x, x + width, y + height, y, -3000, 3000);
 }
 
 const float cameraAngle = -45.0f;
@@ -15,11 +15,11 @@ void Camera::setLightProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glRotatef(cameraAngle, 1, 0, 0);
-	glOrtho(x, x + width, y + height, y, -1500, 1500);
+	glOrtho(x, x + width, y + height, y, -3000, 3000);
 }
 
 glm::mat4 Camera::getLightProjection() {
-	glm::mat4 projection = glm::ortho(x, x + width, y + height, y, -1500.f, 1500.f);
+	glm::mat4 projection = glm::ortho(x, x + width, y + height, y, -3000.f, 3000.f);
 	glm::mat4 view = glm::rotate(glm::mat4(), glm::radians(cameraAngle), glm::vec3(1.f, 0.f, 0.f));
 
 	return view * projection;
