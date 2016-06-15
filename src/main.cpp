@@ -167,6 +167,11 @@ void enemySpawner(float deltatime){
 }
 
 void display() {
+	static bool firstTime = true;
+	if (firstTime) {
+		frameTimer.restart();
+	}
+
 	float deltaTime = frameTimer.time();
 	frameTimer.restart();
 	
@@ -229,6 +234,11 @@ void display() {
 	glutSwapBuffers();
 
 	glutPostRedisplay();
+
+	if (firstTime) {
+		frameTimer.restart();
+		firstTime = false;
+	}
 }
 
 void drawPostProcessing(float deltaTime, int pass) {
