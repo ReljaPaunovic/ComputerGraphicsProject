@@ -85,9 +85,9 @@ vec3 calculateNormal(vec2 noiseCoords) {
 }
 
 void main() {
-    vec2 noiseCoords = vec2(gl_Vertex.x + cameraX / screenWidth, gl_Vertex.z);
+    vec2 noiseCoords = vec2(gl_Vertex.x + cameraX / screenWidth * 2.0, gl_Vertex.z);
     coordinates = transformPos(noiseCoords);
-    coordinates.x -= cameraX / screenWidth;
+    coordinates.x -= cameraX / screenWidth * 2.0;
 
     normal = calculateNormal(noiseCoords);
 
@@ -95,5 +95,5 @@ void main() {
 
     modelView = gl_ModelViewMatrix;
 
-    gl_TexCoord[0] = vec4(gl_MultiTexCoord0.x + cameraX / (2.0 * screenWidth), gl_MultiTexCoord0.yzw);
+    gl_TexCoord[0] = vec4(gl_MultiTexCoord0.x + cameraX / (screenWidth), gl_MultiTexCoord0.yzw);
 }
