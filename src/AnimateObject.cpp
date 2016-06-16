@@ -65,6 +65,8 @@ void AnimateObject::tick(float deltaTime)
 
 void AnimateObject::render(bool shadow)
 {
+if(shadow)
+	return;
 	setupTransformation();
 
 	glEnable(GL_TEXTURE_2D);
