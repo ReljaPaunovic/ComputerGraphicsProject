@@ -61,7 +61,7 @@ void Boss::render() {
 
 	glMatrixMode(GL_MODELVIEW);
 
-	float dir=atan(xDirection/yDirection)/3.14*360;
+	float dir=(atan2(xDirection,yDirection)/(3.14*2))*360;
 	std::cout<<dir<< " ";
 	glRotatef(dir,0,0,1);
 	glScalef(15, 15, 15);
