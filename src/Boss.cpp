@@ -17,8 +17,8 @@ void Boss::loadTextures() {
 	x = 32000;
 	y = 750;
 	speed = 240;
-	eyeTexture = Util::loadTexture("textures/hal.png");
-	rivetTexture = Util::loadTexture("textures/metal_rivets.jpg");
+	eyeTexture = Util::loadTexture("textures/headscales.png");
+	rivetTexture = Util::loadTexture("textures/headscales.jpg");
 }
 
 
@@ -87,7 +87,7 @@ void Boss::render() {
 	modelHead.draw();
 
 	glUseProgram(originalProgram);
-	//**************
+
 	
 
 	glBindTexture(GL_TEXTURE_2D, eyeTexture);
