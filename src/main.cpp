@@ -57,7 +57,7 @@ GLint playerPositionUniformLoc[2];
 GLint timeUniformLoc[2];
 
 GLint mountainShader;
-
+bool pauze=false;
 void print_stroke_string(void* font, char* s)
 {
 	if (s && strlen(s)) {
@@ -335,6 +335,8 @@ void drawPostProcessing(float deltaTime, int pass) {
 }
 
 void drawGameObjects(float deltaTime, bool shadowRender) {
+
+
 	// Set up world projection
 	camera->updatePosition(player);
 
@@ -373,7 +375,7 @@ void drawGameObjects(float deltaTime, bool shadowRender) {
 	std::vector<GameObject*> gameObjectsCopy = gameObjects;
 
 	for (GameObject* obj : gameObjectsCopy) {
-		if (!shadowRender) obj->tick(deltaTime);
+		if (!pauze&&!shadowRender) obj->tick(deltaTime);
 		obj->render(shadowRender);
 	}
 }
@@ -458,6 +460,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 void keyboardUp(unsigned char key, int x, int y) {
 	player->handleKeyboard(key, false);
 
+
 	switch (key) {
 	case '1':
 	case '2':
@@ -465,7 +468,12 @@ void keyboardUp(unsigned char key, int x, int y) {
 	case '4':
 		setShader(key - '1');
 		break;
-
+	case 'p':
+	std::cout<<"pauze shifted"<<std::endl;
+	if (pauze==0){
+		pauze = 1;
+	}else{ pauze =0;}
+	break;
 	case 27:
 		exit(0);
 	}

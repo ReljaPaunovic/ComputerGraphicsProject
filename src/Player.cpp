@@ -15,9 +15,9 @@ Player::Player()
 {
 	x = 100;
 	y = 400;
-	cx = 0;
-	cy = 0;
-	collider = new Collider(60);
+	cx = 15;
+	cy = 15;
+	collider = new Collider(35);
 	velocity = 800;
 	//velocity = 0;
 
