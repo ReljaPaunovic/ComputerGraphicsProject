@@ -24,7 +24,7 @@ void main() {
     if (shadowCoords.x < 0 || shadowCoords.x > 1 || shadowCoords.y < 0 || shadowCoords.y > 1) {
         shadowFactor = 1.0;
     } else {
-        shadowFactor = texture(texShadowMap, vec3(shadowCoords.xy, shadowCoords.z), shadowBias).r;
+        shadowFactor = texture(texShadowMap, vec3(shadowCoords.xy, shadowCoords.z / 2.0 + 0.5 - shadowBias)).r;
     }
 
     // Determine texture and diffuse lighting
