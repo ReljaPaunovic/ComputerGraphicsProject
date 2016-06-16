@@ -7,7 +7,7 @@ uniform sampler2D texSnow;
 uniform sampler2D texRockGrass;
 
 uniform mat4 shadowMapProjection;
-uniform sampler2D texShadowMap;
+uniform sampler2DShadow texShadowMap;
 
 float shadowBias = 0.01;
 float ambientLight = 0.5;
@@ -24,15 +24,7 @@ void main() {
     if (shadowCoords.x < 0 || shadowCoords.x > 1 || shadowCoords.y < 0 || shadowCoords.y > 1) {
         shadowFactor = 1.0;
     } else {
-        // Get depth of shadow at position and map to [-1, 1] range
-        float shadowDepth = texture(texShadowMap, shadowCoords.xy).r;
-        shadowDepth = (shadowDepth - 0.5) * 2.0;
-
-        if (shadowCoords.z > shadowDepth + shadowBias) {
-            shadowFactor = ambientLight;
-        } else {
-            shadowFactor = 1.0;
-        }
+        shadowFactor = texture(texShadowMap, vec3(shadowCoords.xy, shadowCoords.z), shadowBias).r;
     }
 
     // Determine texture and diffuse lighting
