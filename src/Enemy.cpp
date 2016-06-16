@@ -19,10 +19,10 @@ Enemy::Enemy()
 
 	x = 400;
 	y = 150;
-	cx = 48;
-	cy = 48;
+	cx = 0;
+	cy = 0;
 	angle = 0;
-	collider = new Collider(100);
+	collider = new Collider(65);
 	
 	// this is to lower the chance bombs will overlap
 	z = (float) (10 + rand() % 100);

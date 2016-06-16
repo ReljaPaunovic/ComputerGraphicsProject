@@ -101,7 +101,7 @@ void BossSegment::render(bool shadow)
 	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
 	glUseProgram(shader);
 
-	glUniform1i(glGetUniformLocation(shader, "enableNormalMapping"), GL_TRUE);
+	glUniform1i(glGetUniformLocation(shader, "enableNormalMapping"), GL_FALSE);
 	glUniform1i(glGetUniformLocation(shader, "texNormal"), 1);
 	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_FALSE);
 	//glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f, 10.0f, 1.0f - health / 100.0f));
