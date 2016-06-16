@@ -21,7 +21,7 @@ Player::Player()
 	velocity = 800;
 	//velocity = 0;
 
-	texture = Util::loadTexture("textures/metal_plate.jpg");
+	texture = Util::loadTexture("textures/space.jpg");
 
 	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
 

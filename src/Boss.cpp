@@ -16,7 +16,7 @@ Boss::~Boss()
 void Boss::loadTextures() {
 	x = 32000;
 	y = 750;
-	speed = 240;
+	speed = 100;
 	eyeTexture = Util::loadTexture("textures/headscales.png");
 	rivetTexture = Util::loadTexture("textures/headscales.jpg");
 }
