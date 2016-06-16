@@ -15,6 +15,6 @@ void main() {
     if (enableSimplification) {
         pos = vec4(roundCoord(pos.x), roundCoord(pos.y), roundCoord(pos.z), pos.w);
     }
-
+    
     gl_Position = gl_ModelViewProjectionMatrix * pos;
 }

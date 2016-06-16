@@ -57,6 +57,7 @@ private:
 	float rollTarget = 0.0f;
 
 	GLuint texture;
+	GLuint textureNormal;
 	GLuint shader;
 
 	sf::SoundBuffer shootSoundBuffer;

@@ -22,6 +22,7 @@ Player::Player()
 	//velocity = 0;
 
 	texture = Util::loadTexture("textures/space.jpg");
+	textureNormal = Util::loadTexture("textures/spaceN.png");
 
 	shader = Util::createShaderProgram("shaders/mesh.vert", "shaders/mesh.frag");
 
@@ -142,17 +143,25 @@ void Player::render() {
 
 	glEnable(GL_TEXTURE_2D);
 
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureNormal);
+	glActiveTexture(GL_TEXTURE0);
 
 	GLint originalProgram;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
 	glUseProgram(shader);
 
+	glUniform1i(glGetUniformLocation(shader, "enableNormalMapping"), GL_TRUE);
+	glUniform1i(glGetUniformLocation(shader, "texNormal"), 1);
 	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_TRUE);
 	glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f, 10.0f, 1.0f - health / 100.0f));
 
 	static OBJModel lol("models/tiefighter.obj");
 	lol.draw();
+
+	glUniform1i(glGetUniformLocation(shader, "enableNormalMapping"), GL_FALSE);
 
 	glDisable(GL_TEXTURE_2D);
 
