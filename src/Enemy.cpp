@@ -46,7 +46,7 @@ Enemy::~Enemy()
 {
 }
 
-void Enemy::render() {
+void Enemy::render(bool shadow) {
 
 	setupTransformation();
 

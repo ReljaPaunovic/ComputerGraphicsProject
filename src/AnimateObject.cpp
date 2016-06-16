@@ -63,7 +63,7 @@ void AnimateObject::tick(float deltaTime)
 	timeSoFar += deltaTime;
 }
 
-void AnimateObject::render()
+void AnimateObject::render(bool shadow)
 {
 	setupTransformation();
 

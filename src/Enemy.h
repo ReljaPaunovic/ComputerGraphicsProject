@@ -9,7 +9,7 @@ public:
 	~Enemy();
 
 	void tick(float deltaTime);
-	void render();
+	void render(bool shadow);
 	void onCollide(GameObject* other);
 
 	void setHealth(float value) {

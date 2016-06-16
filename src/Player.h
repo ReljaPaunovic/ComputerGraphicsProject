@@ -16,7 +16,7 @@ public:
 	void handleKeyboard(unsigned char key, bool down);
 
 	void tick(float deltaTime);
-	void render();
+	void render(bool shadow);
 	void onCollide(GameObject* other);
 
 	float getHealth() const;

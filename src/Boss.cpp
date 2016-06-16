@@ -56,7 +56,7 @@ void Boss::tick(float deltaTime) {
 	}*/
 }
 
-void Boss::render() {
+void Boss::render(bool shadow) {
 	setupTransformation();
 
 	glMatrixMode(GL_MODELVIEW);

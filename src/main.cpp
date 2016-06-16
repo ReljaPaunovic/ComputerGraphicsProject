@@ -340,6 +340,7 @@ void drawGameObjects(float deltaTime, bool shadowRender) {
 
 	if (shadowRender) {
 		camera->setLightProjection();
+
 	} else {
 		camera->setProjection();
 	}
@@ -373,7 +374,7 @@ void drawGameObjects(float deltaTime, bool shadowRender) {
 
 	for (GameObject* obj : gameObjectsCopy) {
 		if (!shadowRender) obj->tick(deltaTime);
-		obj->render();
+		obj->render(shadowRender);
 	}
 }
 

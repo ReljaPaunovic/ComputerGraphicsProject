@@ -13,7 +13,7 @@ public:
 	GameObject();
 	~GameObject();
 
-	virtual void render() = 0;
+	virtual void render(bool shadow) = 0;
 	virtual void tick(float deltaTime) = 0;
 	virtual void onCollide(GameObject* other) = 0;
 

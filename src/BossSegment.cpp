@@ -84,7 +84,7 @@ void BossSegment::tick(float deltaTime)
 	//printf("(x,y,i) = (%f, %f, %d) \n", this->x, this->y, segmentNum);
 }
 
-void BossSegment::render()
+void BossSegment::render(bool shadow)
 {
 	setupTransformation();
 	glMatrixMode(GL_MODELVIEW);

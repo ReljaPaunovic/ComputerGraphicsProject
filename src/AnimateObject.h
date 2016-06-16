@@ -12,7 +12,7 @@ public:
 	~AnimateObject();
 
 	void tick(float deltaTime);
-	void render();
+	void render(bool shadow);
 	void onCollide(GameObject* other);
 
 private:

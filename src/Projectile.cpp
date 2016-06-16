@@ -35,7 +35,9 @@ void Projectile::onCollide(GameObject* other) {
 	// TODO
 }
 
-void Projectile::render() {
+void Projectile::render(bool shadow) {
+	if(shadow)
+		return;
 	setupTransformation();
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);

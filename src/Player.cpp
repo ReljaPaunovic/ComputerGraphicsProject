@@ -136,7 +136,7 @@ void Player::onCollide(GameObject* other) {
 	// TODO
 }
 
-void Player::render() {
+void Player::render(bool render) {
 	setupTransformation();
 
 	glRotatef(roll, 1, 0, 0);
