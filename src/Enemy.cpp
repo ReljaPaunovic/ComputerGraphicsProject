@@ -22,7 +22,7 @@ Enemy::Enemy()
 	cx = 0;
 	cy = 0;
 	angle = 0;
-	collider = new Collider(130);
+	collider = new Collider(65);
 	
 	// this is to lower the chance bombs will overlap
 	z = (float) (10 + rand() % 100);
