@@ -60,7 +60,11 @@ void Boss::render() {
 	setupTransformation();
 
 	glMatrixMode(GL_MODELVIEW);
-	glScalef(30, 30, 30);
+
+	float dir=atan(xDirection/yDirection)/3.14*360;
+	std::cout<<dir<< " ";
+	glRotatef(dir,0,0,1);
+	glScalef(15, 15, 15);
 
 	GLfloat mat_specular[] = {10.0, 10.0, 10.0, 1.0};
 	GLfloat mat_shininess[] = {50.0};
@@ -84,13 +88,14 @@ void Boss::render() {
 	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_TRUE);
 	glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f / 30, 10.0f / 30, (1 - currentNumSegments * 1.0f / numSegments)));
 	//printf("%f \n", 1 - currentNumSegments * 1.0f / numSegments);
+
 	modelHead.draw();
 
 	glUseProgram(originalProgram);
 
 	
 
-	glBindTexture(GL_TEXTURE_2D, eyeTexture);
+/*	glBindTexture(GL_TEXTURE_2D, eyeTexture);
 
 	glTranslatef(0, 0, 2);
 
@@ -99,7 +104,7 @@ void Boss::render() {
 	glTranslatef(-1.5, 0, 0);
 
 	modelEye.draw();
-
+*/
 	glDisable(GL_TEXTURE_2D);
 	
 
