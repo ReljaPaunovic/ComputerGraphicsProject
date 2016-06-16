@@ -78,7 +78,7 @@ void Player::tick(float deltaTime) {
 
 	// Roll player to currently intended roll (based on turning or not)
 	float deltaRoll = rollTarget - roll;
-	roll += deltaRoll * deltaTime * velocity / 100.0f;
+	roll += deltaRoll * deltaTime * abs(velocity) / 100.0f;
 
 	rollTarget = 0.0f;
 	if (rotationLeft) rollTarget += -15;
