@@ -16,8 +16,8 @@ void main() {
 	int ind;
 	vec4 c;
     vec4 originalColor = vec4(0,0,0,0);
-	for(float x = 0.0; x <= 10/800.0; x=x+1.0/800.0) {
-		for(float y = 0.0; y <= 10/800.0; y=y+1.0/800.0) {
+	for(float x = 0.0; x <= 6/800.0; x=x+1.0/800.0) {
+		for(float y = 0.0; y <= 6/800.0; y=y+1.0/800.0) {
 			c = texture2D(tex,gl_TexCoord[0].xy+vec2(x,y));
 			ind=int(((c.r+c.g+c.b)*1.66667));
 			averageR[ind]=averageR[ind]+c.r;
