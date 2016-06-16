@@ -10,6 +10,7 @@
 
 static GLint shader = -1;
 static GLint texture = -1;
+static GLint textureNormal = -1;
 
 BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 {
@@ -28,6 +29,7 @@ BossSegment::BossSegment(BossSegment* obj, float x, float y, int i)
 
 	if (texture == -1) {
 		texture = Util::loadTexture("textures/scales.jpg");
+		textureNormal = Util::loadTexture("textures/scalesN.png");
 	}
 	
 	if (shader == -1) {
@@ -99,11 +101,15 @@ void BossSegment::render()
 	glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
 	glUseProgram(shader);
 
+	glUniform1i(glGetUniformLocation(shader, "enableNormalMapping"), GL_TRUE);
+	glUniform1i(glGetUniformLocation(shader, "texNormal"), 1);
 	glUniform1i(glGetUniformLocation(shader, "enableSimplification"), GL_FALSE);
 	//glUniform1f(glGetUniformLocation(shader, "simplifyGridSpacing"), Util::lerp(0.1f, 10.0f, 1.0f - health / 100.0f));
 	
 	static OBJModel lol("models/snake_segment.obj");
 	lol.draw();
+
+	glUniform1i(glGetUniformLocation(shader, "enableNormalMapping"), GL_FALSE);
 
 	glDisable(GL_TEXTURE_2D);
 	
